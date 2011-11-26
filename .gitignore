@@ -1,0 +1,7 @@
+log/*.log
+*.log
+out-*.txt
+tmp/
+.DS_Store
+*.esproj/
+.idea/
