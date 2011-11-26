@@ -127,7 +127,7 @@ class SimpleWorker{
         $this->setProjectId($project_id);   
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/codes/$code_id";
-        return json_decode(json_decode($this->apiCall(self::GET, $url)));
+        return json_decode($this->apiCall(self::GET, $url));
     }
 
     public function postCode($project_id, $filename, $zipFilename,$name){
@@ -183,30 +183,18 @@ class SimpleWorker{
         return json_decode($response);
     }
 
- /*
+
     function postProject($name){
-        $url =  'projects';
-        payload = [{"name" : $name, "class_name" : $name, "access_key" : $name}]
-        timestamp = time.asctime()
-        #data = {"payload" : payload, "oauth" : $this->token, "version" : $this->version, "timestamp" : timestamp, "options" : {}, "api_version" : $this->version
-    
-        #data = {"payload" : payload}
-        data = {"name" : name}
-        data = json.dumps(data)
-        dataLen = len(data)
-        headers = $this->headers
-        headers['Content-Type'] = "application/json"
-        headers['Content-Length'] = str(dataLen)
-    
-        req = urllib2.Request(url, data, headers)
-        ret = urllib2.urlopen(req)
-        s = ret.read()
-        echo "postProject returns:  " + s
-        msg = json_decode(s)
-        project_id = msg['id']
-        return project_id
+        $request = array(
+            'name' => $name
+        );
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, 'projects', $request);
+        $responce = json_decode($res);
+        return $responce->id;
     }
-*/
+
     public function deleteProject($project_id){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}";
@@ -221,6 +209,9 @@ class SimpleWorker{
 
     public function deleteTask($project_id, $task_id){
         $this->setProjectId($project_id);
+        $this->setCommonHeaders();
+        $this->headers['Accept'] = "text/plain";
+        unset($this->headers['Content-Type']);
         $url = "projects/{$this->project_id}/tasks/$task_id";
         return $this->apiCall(self::DELETE, $url);
     }
@@ -240,16 +231,14 @@ class SimpleWorker{
     }
 
     /**
-     * @param $project_id
-     * @param $name
+     * @param string $project_id
+     * @param string $name
      * @param int $delay delay in seconds
-     * @return array {"msg":"Queued up","status_code":200,"tasks":[{"id":"..."}]}
+     * @return string posted Schedule id
      */
     public function postSchedule($project_id, $name, $delay = 1){
         $this->setProjectId($project_id);
-
         $url = "projects/{$this->project_id}/schedules";
-        $this->debug('postSchedule url', $url);
 
         $payload = array(
             "class_name" => $name,
@@ -285,16 +274,14 @@ class SimpleWorker{
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
 
-        $this->debug('postSchedule res', $res);
-        return json_decode($res);
+        #$this->debug('postSchedule res', $res);
+        $shedules = json_decode($res);
+        return $shedules->schedules[0]->id;
     }
 
     function postTask($project_id, $name){
         $this->setProjectId($project_id);
-
         $url = "projects/{$this->project_id}/tasks";
-        $this->debug('postTask url', $url);
-
 
         $payload = array(
             "class_name" => $name,
@@ -314,8 +301,9 @@ class SimpleWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-        $this->debug('postTask res', $res);
-        return json_decode($res);
+        #$this->debug('postTask res', $res);
+        $tasks = json_decode($res);
+        return $tasks->tasks[0]->id;
     }
 
     function getLog($project_id, $task_id){
@@ -330,10 +318,17 @@ class SimpleWorker{
     /* PRIVATE FUNCTIONS */
 
     private function compiledHeaders(){
+
+        # Set default headers if no headers set.
+        if ($this->headers == null){
+            $this->setCommonHeaders();
+        }
+
         $headers = array();
         foreach ($this->headers as $k => $v){
             $headers[] = "$k: $v";
         }
+        #$this->debug("headers", $headers);
         return $headers;
     }
 
@@ -358,6 +353,7 @@ class SimpleWorker{
 
     private function apiCall($type, $url, $params = array()){
         $url = "{$this->url}$url";
+        $this->debug('apiCall url', $url);
 
         $s = curl_init();
         switch ($type) {
