@@ -57,6 +57,20 @@ $res = $sw->deleteTask($projects[0]->id, $task_id);
 tolog('delete_task', $res);
 */
 
+echo "\n--Set Task Progress-----------------------------------\n";
+$res = $sw->setTaskProgress($projects[0]->id, $task_id, 50, 'Job half-done');
+tolog('set_task_progress', $res, true);
+
+/*
+echo "\n--Cancel Task-----------------------------------\n";
+# TODO: returns {"goto":"http://www.iron.io","version":"2.0.12"}
+# or {"msg":"Method POST not allowed","status_code":405}
+$res = $sw->cancelTask($projects[0]->id, $task_id);
+tolog('cancel_task', $res, true);
+*/
+
+
+
 # =========================== Codes =============================
 
 echo "\n--Get Codes-------------------------------------------\n";

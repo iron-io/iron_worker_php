@@ -219,7 +219,12 @@ class SimpleWorker{
     public function deleteSchedule($project_id, $schedule_id){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/schedules/$schedule_id";
-        return $this->apiCall(self::DELETE, $url);
+
+        $request = array(
+            'schedule_id' => $schedule_id
+        );
+
+        return $this->apiCall(self::DELETE, $url, $request);
     }
 
     public function getSchedules($project_id){
@@ -313,6 +318,30 @@ class SimpleWorker{
         $this->headers['Accept'] = "text/plain";
         unset($this->headers['Content-Type']);
         return $this->apiCall(self::GET, $url);
+    }
+
+
+    function cancelTask($project_id, $task_id){
+        $url = "projects/$project_id/tasks/$task_id/cancel";
+        $request = array();
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+        $responce = json_decode($res);
+        return $responce;
+    }
+
+    function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
+        $url = "projects/$project_id/tasks/$task_id/progress";
+        $request = array(
+            'percent' => $percent,
+            'msg'     => $msg
+        );
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+        $responce = json_decode($res);
+        return $responce;
     }
 
     /* PRIVATE FUNCTIONS */
