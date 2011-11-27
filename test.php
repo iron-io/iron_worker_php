@@ -35,6 +35,23 @@ $res = $sw->deleteProject($project_id);
 tolog('delete_project', $res);
 */
 
+# =========================== Codes =============================
+
+echo "\n--Get Codes-------------------------------------------\n";
+$codes = $sw->getCodes($projects[0]->id);
+tolog('codes', $codes);
+
+echo "\n--Posting Code----------------------------------------\n";
+$zipName = $name.'.zip';
+$files_to_zip = array('testTask.php');
+# if true, good; if false, zip creation failed
+$zipFile = SimpleWorker::createZip($files_to_zip, $zipName, true);
+$res = $sw->postCode($projects[0]->id, 'testTask.php', $zipName, $name);
+tolog('post_code', $res);
+
+echo "\n-Get Code Details--------------------------------------\n";
+$code_details = $sw->getCodeDetails($codes[0]->id, $projects[0]->id);
+tolog('get_code_details', $code_details);
 
 # =========================== Tasks =============================
 
@@ -70,25 +87,6 @@ tolog('cancel_task', $res, true);
 */
 
 
-
-# =========================== Codes =============================
-
-echo "\n--Get Codes-------------------------------------------\n";
-$codes = $sw->getCodes($projects[0]->id);
-tolog('codes', $codes);
-
-echo "\n--Posting Code----------------------------------------\n";
-$zipName = $name.'.zip';
-$files_to_zip = array('testTask.php');
-# if true, good; if false, zip creation failed
-$zipFile = SimpleWorker::createZip($files_to_zip, $zipName, true);
-$res = $sw->postCode($projects[0]->id, 'testTask.php', $zipName, $name);
-tolog('post_code', $res);
-
-echo "\n-Get Code Details--------------------------------------\n";
-$code_details = $sw->getCodeDetails($codes[0]->id, $projects[0]->id);
-tolog('get_code_details', $code_details);
-
 # ========================== Schedules ==========================
 
 echo "\n--Get Schedules----------------------------------------\n";
@@ -96,9 +94,15 @@ $schedules = $sw->getSchedules($projects[0]->id);
 tolog('schedules', $schedules);
 
 
-echo "\n--Posting Shedule--------------------------------------\n";
-$schedule_id = $sw->postSchedule($projects[0]->id, $name, 10);
-tolog('post_schedule', $schedule_id, true);
+echo "\n--Posting Simple Shedule--------------------------------------\n";
+$schedule_id = $sw->postScheduleSimple($projects[0]->id, $name, 10);
+tolog('post_schedule_simple', $schedule_id, true);
+
+echo "\n--Posting Advanced Shedule--------------------------------------\n";
+$start_at = SimpleWorker::dateRfc3339(time());
+echo ">>>$start_at<<<\n";
+$schedule_id = $sw->postScheduleAdvanced($projects[0]->id, $name, $start_at, 50, null, 4, 0);
+tolog('post_schedule_advanced', $schedule_id, true);
 
 /*
 echo "\n--Deleting Shedule-------------------------------------\n";
