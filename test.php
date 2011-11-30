@@ -7,10 +7,10 @@ function tolog($name, $variable, $display = false){
     if ($display){echo "{$name}: ".var_export($variable,true)."\n";}
 }
 
-$name = "helloPHP-".date('Y-m-d');
+$name = "helloPHP-".microtime(true)
 
-#$sw = new SimpleWorker('config_sw.ini');
-$sw = new SimpleWorker('config_production.ini');
+$sw = new SimpleWorker('config_sw.ini');
+//$sw = new SimpleWorker('config_production.ini');
 $sw->debug_enabled = true;
 
 
@@ -42,9 +42,9 @@ echo "\n--Get Tasks-------------------------------------------\n";
 $tasks = $sw->getTasks($projects[0]->id);
 tolog('tasks', $tasks);
 
-echo "\n--Get Task Log----------------------------------------\n";
-$log = $sw->getLog($projects[0]->id, $tasks[0]->id);
-tolog('task_log', $log);
+#echo "\n--Get Task Log----------------------------------------\n";
+#$log = $sw->getLog($projects[0]->id, $tasks[0]->id);
+#tolog('task_log', $log);
 
 echo "\n--Posting Task----------------------------------------\n";
 $task_id = $sw->postTask($projects[0]->id, $name);

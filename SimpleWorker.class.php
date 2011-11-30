@@ -309,7 +309,7 @@ class SimpleWorker{
     function getLog($project_id, $task_id){
         $this->setProjectId($project_id);
         $this->setJsonHeaders();
-        $url = "projects/$project_id/tasks/$task_id/log/";
+        $url = "projects/$project_id/tasks/$task_id/log";
         $this->headers['Accept'] = "text/plain";
         unset($this->headers['Content-Type']);
         return $this->apiCall(self::GET, $url);
@@ -356,6 +356,9 @@ class SimpleWorker{
         $this->debug('apiCall url', $url);
 
         $s = curl_init();
+        if (! isset($params['oauth'])) {
+          $params['oauth'] = $this->token;
+        }
         switch ($type) {
             case self::DELETE:
                 curl_setopt($s, CURLOPT_URL, $url . '?' . http_build_query($params));
@@ -367,7 +370,10 @@ class SimpleWorker{
                 curl_setopt($s, CURLOPT_POSTFIELDS, json_encode($params));
                 break;
             case self::GET:
-                curl_setopt($s, CURLOPT_URL, $url . '?' . http_build_query($params));
+                $fullUrl = $url . '?' . http_build_query($params);
+                $this->debug('apiCall fullUrl', $fullUrl);
+                
+                curl_setopt($s, CURLOPT_URL, $fullUrl);
                 break;
         }
 
