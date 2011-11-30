@@ -87,6 +87,22 @@ class SimpleWorker{
             return false;
         }
     }
+    public static function dateRfc3339($timestamp = 0) {
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+        $date = date('Y-m-d\TH:i:s', $timestamp);
+
+        $matches = array();
+        if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
+            $date .= $matches[1].$matches[2].':'.$matches[3];
+        } else {
+            $date .= 'Z';
+        }
+        return $date;
+
+    }
 
     public function setProjectId($project_id) {
         if (!empty($project_id)){
@@ -219,7 +235,12 @@ class SimpleWorker{
     public function deleteSchedule($project_id, $schedule_id){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/schedules/$schedule_id";
-        return $this->apiCall(self::DELETE, $url);
+
+        $request = array(
+            'schedule_id' => $schedule_id
+        );
+
+        return $this->apiCall(self::DELETE, $url, $request);
     }
 
     public function getSchedules($project_id){
@@ -236,47 +257,28 @@ class SimpleWorker{
      * @param int $delay delay in seconds
      * @return string posted Schedule id
      */
-    public function postSchedule($project_id, $name, $delay = 1){
-        $this->setProjectId($project_id);
-        $url = "projects/{$this->project_id}/schedules";
+    public function postScheduleSimple($project_id, $name, $delay = 1){
+        return $this->postSchedule($project_id, $name, array('delay' => $delay));
+    }
 
-        $payload = array(
-            "class_name" => $name,
-            "access_key" => $name,
-            "code_name"  => $name
-        );
-    /*
-    schedules - required - array of schedules containing:
-       * start_at OR delay — required - start_at is time of first run. Delay is number of seconds to wait before starting.
-       * name - required - name of schedule. If rescheduled, the new schedule will replace an old one with the same name (NOT IMPLEMENTED YET, but be ready for it).
-       * code_name - required - name of code to execute. Name must match the name of a code package previously uploaded.
-       * payload - required - data payload for task as a string. Same as payload when queuing up a task.
-       * run_every — optional - Time in seconds between runs. If omitted, task will only run once.
-       * end_at — optional - Time tasks will stop being enqueued. (Should be a Time or DateTime object.)
-       * run_times — optional - Number of times to run task. For example, if run_times: is 5, the task will run 5 times.
-       * priority — optional - Priority queue to run the job in (0, 1, 2). p0 is default. Run at higher priorities to reduce time jobs may spend in the queue once they come off schedule. Same as priority when queuing up a task.
-    */
-        $request = array(
-           'schedules' => array(
-               array(
-                   'delay' => $delay,
-                   'name' => $name,
-                   'code_name' => $name,
-                   'payload' => json_encode(array($payload)),
-                   #'run_every' => 1,
-                   #'end_at' => 1,
-                   #'run_times' => 1,
-                   #'priority' => 1,
-               )
-           )
-        );
-
-        $this->setCommonHeaders();
-        $res = $this->apiCall(self::POST, $url, $request);
-
-        #$this->debug('postSchedule res', $res);
-        $shedules = json_decode($res);
-        return $shedules->schedules[0]->id;
+    /**
+     * @param string $project_id
+     * @param string $name
+     * @param string $start_at Time of first run.
+     * @param int $run_every Time in seconds between runs. If omitted, task will only run once.
+     * @param string $end_at Time tasks will stop being enqueued.
+     * @param int $run_times Number of times to run task.
+     * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
+     * @return string posted Schedule id
+     */
+    public function postScheduleAdvanced($project_id, $name, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
+        $options = array();
+        $options['start_at'] = $start_at;
+        if (!empty($run_every)) $options['run_every'] = $run_every;
+        if (!empty($end_at))    $options['end_at']    = $end_at;
+        if (!empty($run_times)) $options['run_times'] = $run_times;
+        if (!empty($priority))  $options['priority']  = $priority;
+        return $this->postSchedule($project_id, $name, $options);
     }
 
     function postTask($project_id, $name){
@@ -315,7 +317,73 @@ class SimpleWorker{
         return $this->apiCall(self::GET, $url);
     }
 
+
+    function cancelTask($project_id, $task_id){
+        $url = "projects/$project_id/tasks/$task_id/cancel";
+        $request = array();
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+        $responce = json_decode($res);
+        return $responce;
+    }
+
+    function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
+        $url = "projects/$project_id/tasks/$task_id/progress";
+        $request = array(
+            'percent' => $percent,
+            'msg'     => $msg
+        );
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+        $responce = json_decode($res);
+        return $responce;
+    }
+
     /* PRIVATE FUNCTIONS */
+
+    /**
+     * $options contain:
+     *   start_at OR delay — required - start_at is time of first run. Delay is number of seconds to wait before starting.
+     *   run_every — optional - Time in seconds between runs. If omitted, task will only run once.
+     *   end_at — optional - Time tasks will stop being enqueued. (Should be a Time or DateTime object.)
+     *   run_times — optional - Number of times to run task. For example, if run_times: is 5, the task will run 5 times.
+     *   priority — optional - Priority queue to run the job in (0, 1, 2). p0 is default. Run at higher priorities to reduce time jobs may spend in the queue once they come off schedule. Same as priority when queuing up a task.
+     *
+     * @param string $project_id
+     * @param string $name
+     * @param array $options
+     * @return mixed
+     */
+    private function postSchedule($project_id, $name, $options){
+
+        $this->setProjectId($project_id);
+        $url = "projects/{$this->project_id}/schedules";
+
+        $payload = array(
+            "class_name" => $name,
+            "access_key" => $name,
+            "code_name"  => $name
+        );
+        $shedule = array(
+           'name' => $name,
+           'code_name' => $name,
+           'payload' => json_encode(array($payload)),
+        );
+        $request = array(
+           'schedules' => array(
+               array_merge($shedule, $options)
+           )
+        );
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+
+        #$this->debug('postSchedule res', $res);
+        $shedules = json_decode($res);
+        return $shedules->schedules[0]->id;
+    }
 
     private function compiledHeaders(){
 
@@ -454,5 +522,7 @@ class SimpleWorker{
             echo "{$var_name}: ".var_export($variable,true)."\n";
         }
     }
+
+
 
 }
