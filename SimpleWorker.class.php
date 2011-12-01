@@ -38,9 +38,16 @@ class SimpleWorker{
     private $project_id;
 
     /**
-     *
-     *
      * @param string|array $config_file_or_options
+     *        array of options or name of config file
+     * required fields in options array or in config:
+     * - token
+     * - protocol
+     * - host
+     * - port
+     * - api_version
+     * optional:
+     * - default_project_id
      */
     function __construct($config_file_or_options){
         $config = $this->getConfigData($config_file_or_options);
@@ -108,6 +115,9 @@ class SimpleWorker{
         if (!empty($project_id)){
           $this->project_id = $project_id;
         }
+        if (empty($this->project_id)){
+            throw new InvalidArgumentException("Please set project_id");
+        }
     }
 
     public function getProjects(){
@@ -140,6 +150,9 @@ class SimpleWorker{
     }
 
     public function getCodeDetails($code_id, $project_id = ''){
+        if (empty($code_id)){
+            throw new InvalidArgumentException("Please set code_id");
+        }
         $this->setProjectId($project_id);   
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/codes/$code_id";
@@ -200,7 +213,7 @@ class SimpleWorker{
     }
 
 
-    function postProject($name){
+    public function postProject($name){
         $request = array(
             'name' => $name
         );
@@ -281,7 +294,7 @@ class SimpleWorker{
         return $this->postSchedule($project_id, $name, $options);
     }
 
-    function postTask($project_id, $name){
+    public function postTask($project_id, $name){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/tasks";
 
@@ -308,8 +321,11 @@ class SimpleWorker{
         return $tasks->tasks[0]->id;
     }
 
-    function getLog($project_id, $task_id){
+    public function getLog($project_id, $task_id){
         $this->setProjectId($project_id);
+        if (empty($task_id)){
+            throw new InvalidArgumentException("Please set task_id");
+        }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/tasks/$task_id/log";
         $this->headers['Accept'] = "text/plain";
@@ -318,7 +334,7 @@ class SimpleWorker{
     }
 
 
-    function cancelTask($project_id, $task_id){
+    public function cancelTask($project_id, $task_id){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
         $request = array();
@@ -329,7 +345,7 @@ class SimpleWorker{
         return $responce;
     }
 
-    function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
+    public function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/tasks/$task_id/progress";
         $request = array(
@@ -465,6 +481,12 @@ class SimpleWorker{
     }
 
 
+    /**
+     * @param array|string $config_file_or_options
+     * array of options or name of config file
+     * @return array
+     * @throws InvalidArgumentException
+     */
     private function getConfigData($config_file_or_options){
         if (is_string($config_file_or_options)){
             $ini = parse_ini_file($config_file_or_options, true);
@@ -472,7 +494,7 @@ class SimpleWorker{
                 throw new InvalidArgumentException("Config file $config_file_or_options not found");
             }
             if (empty($ini['simple_worker'])){
-                throw new InvalidArgumentException("Config file $config_file_or_options nas no section 'simple_worker'");
+                throw new InvalidArgumentException("Config file $config_file_or_options has no section 'simple_worker'");
             }
             $config =  $ini['simple_worker'];
         }elseif(is_array($config_file_or_options)){
@@ -493,11 +515,6 @@ class SimpleWorker{
         $fn = getcwd() . DIRECTORY_SEPARATOR . $filename;
         $this->debug("filename full", $fn);
         return file_get_contents($fn);
-        /*
-        $fh = fopen($fn, "rb");
-        $contents = fread($fh, filesize($fn));
-        fclose($fh);
-        return $contents;*/
     }
 
     private function setCommonHeaders(){
