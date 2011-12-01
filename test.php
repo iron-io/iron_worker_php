@@ -7,7 +7,7 @@ function tolog($name, $variable, $display = false){
     if ($display){echo "{$name}: ".var_export($variable,true)."\n";}
 }
 
-$name = "helloPHP-".microtime(true)
+$name = "helloPHP-".microtime(true);
 
 $sw = new SimpleWorker('config_sw.ini');
 //$sw = new SimpleWorker('config_production.ini');

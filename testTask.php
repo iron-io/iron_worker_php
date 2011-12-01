@@ -1,7 +1,7 @@
 <?php
 
 echo "Hello PHP World!!!\n";
-echo microtime(true) . "\n";
+echo "at " . date('r') . "\n";
 
 
 

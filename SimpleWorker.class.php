@@ -311,7 +311,7 @@ class SimpleWorker{
     function getLog($project_id, $task_id){
         $this->setProjectId($project_id);
         $this->setJsonHeaders();
-        $url = "projects/$project_id/tasks/$task_id/log";
+        $url = "projects/{$this->project_id}/tasks/$task_id/log";
         $this->headers['Accept'] = "text/plain";
         unset($this->headers['Content-Type']);
         return $this->apiCall(self::GET, $url);
@@ -319,7 +319,8 @@ class SimpleWorker{
 
 
     function cancelTask($project_id, $task_id){
-        $url = "projects/$project_id/tasks/$task_id/cancel";
+        $this->setProjectId($project_id);
+        $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
         $request = array();
 
         $this->setCommonHeaders();
@@ -329,7 +330,8 @@ class SimpleWorker{
     }
 
     function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
-        $url = "projects/$project_id/tasks/$task_id/progress";
+        $this->setProjectId($project_id);
+        $url = "projects/{$this->project_id}/tasks/$task_id/progress";
         $request = array(
             'percent' => $percent,
             'msg'     => $msg
