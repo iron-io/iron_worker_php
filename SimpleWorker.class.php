@@ -333,6 +333,16 @@ class SimpleWorker{
         return $this->apiCall(self::GET, $url);
     }
 
+    public function getTaskDetails($project_id, $task_id){
+        $this->setProjectId($project_id);
+        if (empty($task_id)){
+            throw new InvalidArgumentException("Please set task_id");
+        }
+        $this->setJsonHeaders();
+        $url = "projects/{$this->project_id}/tasks/$task_id";
+        return json_decode($this->apiCall(self::GET, $url));
+    }
+
 
     public function cancelTask($project_id, $task_id){
         $this->setProjectId($project_id);

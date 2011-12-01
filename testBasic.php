@@ -13,8 +13,14 @@ $zipFile = SimpleWorker::createZip($files_to_zip, $zipName, true);
 $res = $sw->postCode($project_id, 'testTask.php', $zipName, $name);
 $task_id = $sw->postTask($project_id, $name);
 echo "task_id = $task_id \n";
-sleep(15);
-$log = $sw->getLog($project_id, $task_id);
+sleep(10);
+$details = $sw->getTaskDetails($project_id, $task_id);
+print_r($details);
 
-print_r($log);
+if ($details->status != 'queued'){
+    $log = $sw->getLog($project_id, $task_id);
+    print_r($log);
+}
+
+
 
