@@ -65,9 +65,19 @@ class SimpleWorker{
         $this->project_id   = $default_project_id;
     }
 
-    public static function createZip($files = array(), $destination = '',$overwrite = false) {
+    /**
+     * @static
+     * @param string $base_dir full path to directory which contain files
+     * @param array $files file names should refer to $base_dir,
+     *        examples: 'worker.php','lib/file.php'
+     * @param string $destination zip file name
+     * @param bool $overwrite
+     * @return bool
+     */
+    public static function createZip($base_dir, $files = array(), $destination, $overwrite = false) {
         //if the zip file already exists and overwrite is false, return false
         if(file_exists($destination) && !$overwrite) { return false; }
+        if (!empty($base_dir)) $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         //vars
         $valid_files = array();
         //if files were passed in...
@@ -75,7 +85,7 @@ class SimpleWorker{
             //cycle through each file
             foreach($files as $file) {
                 //make sure the file exists
-                if(file_exists($file)) {
+                if(file_exists($base_dir.$file)) {
                     $valid_files[] = $file;
                 }
             }
@@ -86,7 +96,7 @@ class SimpleWorker{
                 return false;
             }
             foreach($valid_files as $file) {
-                $zip->addFile($file,$file);
+                $zip->addFile($base_dir.$file, $file);
             }
             $zip->close();
             return file_exists($destination);
@@ -94,6 +104,18 @@ class SimpleWorker{
             return false;
         }
     }
+
+    public static function zipDirectory($directory, $destination, $overwrite = false){
+        if (!file_exists($directory) || !is_dir($directory)) return false;
+        $directory = rtrim($directory, DIRECTORY_SEPARATOR);
+
+        $files = self::fileNamesRecursive($directory);
+
+        if (empty($files)) return false;
+
+        return self::createZip($directory, $files, $destination, $overwrite);
+    }
+
     public static function dateRfc3339($timestamp = 0) {
 
         if (!$timestamp) {
@@ -552,6 +574,22 @@ class SimpleWorker{
         }
     }
 
+    private static function fileNamesRecursive($dir, $base_dir = ''){
+        $dir .= DIRECTORY_SEPARATOR;
+        $files = scandir($dir);
+        $names = array();
 
-
+        foreach($files as $name){
+             if ($name == '.' || $name == '..' || $name == '.svn') continue;
+             if (is_dir($dir.$name)){
+                 $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.DIRECTORY_SEPARATOR);
+                 foreach ($inner_names as $iname){
+                     $names[] = $iname;
+                 }
+             }else{
+                 $names[] = $base_dir.$name;
+             }
+        }
+        return $names;
+    }
 }

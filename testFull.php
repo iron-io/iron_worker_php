@@ -39,10 +39,12 @@ tolog('delete_project', $res);
 # =========================== Codes =============================
 
 echo "\n--Posting Code----------------------------------------\n";
-$zipName = $name.'.zip';
+$zipName = "code/$name.zip";
 $files_to_zip = array('testTask.php');
 # if true, good; if false, zip creation failed
-$zipFile = SimpleWorker::createZip($files_to_zip, $zipName, true);
+$zipFile = SimpleWorker::createZip(dirname(__FILE__)."/worker_examples/hello_world", $files_to_zip, $zipName, true);
+if (!$zipFile) die("Zip file $zipName was not created!");
+
 $res = $sw->postCode($project_id, 'testTask.php', $zipName, $name);
 tolog('post_code', $res);
 
