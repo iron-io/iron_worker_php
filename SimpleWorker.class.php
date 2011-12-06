@@ -316,22 +316,16 @@ class SimpleWorker{
         return $this->postSchedule($project_id, $name, $options);
     }
 
-    public function postTask($project_id, $name){
+    public function postTask($project_id, $name, $payload = array()){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/tasks";
-
-        $payload = array(
-            "class_name" => $name,
-            "access_key" => $name,
-            "code_name"  => $name
-        );
 
         $request = array(
             'tasks' => array(
                 array(
                     "name"      => $name,
                     "code_name" => $name,
-                    'payload' => json_encode(array($payload)),
+                    'payload' => json_encode($payload),
                 )
             )
         );
@@ -394,32 +388,27 @@ class SimpleWorker{
     /* PRIVATE FUNCTIONS */
 
     /**
-     * $options contain:
-     *   start_at OR delay — required - start_at is time of first run. Delay is number of seconds to wait before starting.
-     *   run_every — optional - Time in seconds between runs. If omitted, task will only run once.
-     *   end_at — optional - Time tasks will stop being enqueued. (Should be a Time or DateTime object.)
-     *   run_times — optional - Number of times to run task. For example, if run_times: is 5, the task will run 5 times.
-     *   priority — optional - Priority queue to run the job in (0, 1, 2). p0 is default. Run at higher priorities to reduce time jobs may spend in the queue once they come off schedule. Same as priority when queuing up a task.
      *
      * @param string $project_id
      * @param string $name
-     * @param array $options
+     * @param array $options options contain:
+     *   start_at OR delay — required - start_at is time of first run. Delay is number of seconds to wait before starting.
+     *   run_every         — optional - Time in seconds between runs. If omitted, task will only run once.
+     *   end_at            — optional - Time tasks will stop being enqueued. (Should be a Time or DateTime object.)
+     *   run_times         — optional - Number of times to run task. For example, if run_times: is 5, the task will run 5 times.
+     *   priority          — optional - Priority queue to run the job in (0, 1, 2). p0 is default. Run at higher priorities to reduce time jobs may spend in the queue once they come off schedule. Same as priority when queuing up a task.
+     * @param array $payload
      * @return mixed
      */
-    private function postSchedule($project_id, $name, $options){
+    private function postSchedule($project_id, $name, $options, $payload = array()){
 
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/schedules";
 
-        $payload = array(
-            "class_name" => $name,
-            "access_key" => $name,
-            "code_name"  => $name
-        );
         $shedule = array(
            'name' => $name,
            'code_name' => $name,
-           'payload' => json_encode(array($payload)),
+           'payload' => json_encode($payload),
         );
         $request = array(
            'schedules' => array(
@@ -582,7 +571,7 @@ class SimpleWorker{
         foreach($files as $name){
              if ($name == '.' || $name == '..' || $name == '.svn') continue;
              if (is_dir($dir.$name)){
-                 $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.DIRECTORY_SEPARATOR);
+                 $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/');
                  foreach ($inner_names as $iname){
                      $names[] = $iname;
                  }
