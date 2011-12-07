@@ -12,9 +12,16 @@ $zipName = "code/$name.zip";
 $zipFile = SimpleWorker::zipDirectory(dirname(__FILE__)."/worker_examples/post_to_twitter", $zipName, true);
 
 $res = $sw->postCode($project_id, 'postToTwitter.php', $zipName, $name);
-$task_id = $sw->postTask($project_id, $name);
+
+$payload = array(
+    'message' => "Hello From PHPWorker at ".date('r')."!\n",
+    'url'     => 'http://www.iron.io/'
+);
+
+
+$task_id = $sw->postTask($project_id, $name, $payload);
 echo "task_id = $task_id \n";
-sleep(10);
+sleep(15);
 $details = $sw->getTaskDetails($project_id, $task_id);
 print_r($details);
 
