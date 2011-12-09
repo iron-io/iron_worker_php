@@ -68,7 +68,7 @@ class SimpleWorker{
     /**
      * @static
      * @param string $base_dir full path to directory which contain files
-     * @param array $files file names should refer to $base_dir,
+     * @param array $files file names, should refer to $base_dir,
      *        examples: 'worker.php','lib/file.php'
      * @param string $destination zip file name
      * @param bool $overwrite
@@ -181,7 +181,7 @@ class SimpleWorker{
         return json_decode($this->apiCall(self::GET, $url));
     }
 
-    public function postCode($project_id, $filename, $zipFilename,$name){
+    public function postCode($project_id, $filename, $zipFilename, $name){
         $this->setProjectId($project_id);
         $this->setPostHeaders();
         $this->headers['Content-Length'] = filesize($zipFilename);
@@ -199,10 +199,9 @@ class SimpleWorker{
             "class_name" => $name,
             "options" => array(),
             "access_key" => $name);
-        //$sendingData = array();
-        //$sendingData[] = json_encode($sendingData);
+
         $sendingData = json_encode($sendingData);
-        //print_r($sendingData);exit;
+
         // For reference to multi-part encoding in php, see:
         //    http://vedovini.net/2009/08/posting-multipart-form-data-using-php/
         $eol = "\r\n";
@@ -210,7 +209,6 @@ class SimpleWorker{
         $mime_boundary = md5(time());
         $data .= '--' . $mime_boundary . $eol;
         $data .= 'Content-Disposition: form-data; name="data"' . $eol . $eol;
-        //$data .= "Some Data" . $eol;
         $data .= $sendingData . $eol;
         $data .= '--' . $mime_boundary . $eol;
         $data .= 'Content-Disposition: form-data; name="file"; filename=$zipFilename' . $eol;
@@ -226,7 +224,6 @@ class SimpleWorker{
                   'content' => $data
                ));
         $ctx = stream_context_create($params);
-        //$response = @file_get_contents($destination, FILE_TEXT, $ctx);
         $destination = "{$this->url}projects/{$this->project_id}/codes?oauth={$this->token}";
         $this->debug('destination', $destination);
 
@@ -362,6 +359,9 @@ class SimpleWorker{
 
     public function cancelTask($project_id, $task_id){
         $this->setProjectId($project_id);
+        if (empty($task_id)){
+            throw new InvalidArgumentException("Please set task_id");
+        }
         $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
         $request = array();
 
@@ -373,6 +373,9 @@ class SimpleWorker{
 
     public function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
         $this->setProjectId($project_id);
+        if (empty($task_id)){
+            throw new InvalidArgumentException("Please set task_id");
+        }
         $url = "projects/{$this->project_id}/tasks/$task_id/progress";
         $request = array(
             'percent' => $percent,
@@ -460,7 +463,6 @@ class SimpleWorker{
 
     private function apiCall($type, $url, $params = array()){
         $url = "{$this->url}$url";
-        $this->debug('apiCall url', $url);
 
         $s = curl_init();
         if (! isset($params['oauth'])) {
@@ -468,10 +470,13 @@ class SimpleWorker{
         }
         switch ($type) {
             case self::DELETE:
-                curl_setopt($s, CURLOPT_URL, $url . '?' . http_build_query($params));
+                $fullUrl = $url . '?' . http_build_query($params);
+                $this->debug('apiCall fullUrl', $fullUrl);
+                curl_setopt($s, CURLOPT_URL, $fullUrl);
                 curl_setopt($s, CURLOPT_CUSTOMREQUEST, self::DELETE);
                 break;
             case self::POST:
+                $this->debug('apiCall url', $url);
                 curl_setopt($s, CURLOPT_URL,  $url);
                 curl_setopt($s, CURLOPT_POST, true);
                 curl_setopt($s, CURLOPT_POSTFIELDS, json_encode($params));
@@ -479,7 +484,6 @@ class SimpleWorker{
             case self::GET:
                 $fullUrl = $url . '?' . http_build_query($params);
                 $this->debug('apiCall fullUrl', $fullUrl);
-                
                 curl_setopt($s, CURLOPT_URL, $fullUrl);
                 break;
         }
@@ -532,10 +536,7 @@ class SimpleWorker{
     }
 
     private function getFileContent($filename){
-        $this->debug("filename", $filename);
-        $fn = getcwd() . DIRECTORY_SEPARATOR . $filename;
-        $this->debug("filename full", $fn);
-        return file_get_contents($fn);
+        return file_get_contents($filename);
     }
 
     private function setCommonHeaders(){
