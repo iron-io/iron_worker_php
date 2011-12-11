@@ -39,14 +39,15 @@ class SimpleWorker{
 
     /**
      * @param string|array $config_file_or_options
-     *        array of options or name of config file
-     * required fields in options array or in config:
+     *        Array of options or name of config file.
+     * Fields in options array or in config:
+     * Required:
      * - token
      * - protocol
      * - host
      * - port
      * - api_version
-     * optional:
+     * Optional:
      * - default_project_id
      */
     function __construct($config_file_or_options){
@@ -66,12 +67,13 @@ class SimpleWorker{
     }
 
     /**
+     * Creates a zip archieve from array of file names
      * @static
-     * @param string $base_dir full path to directory which contain files
-     * @param array $files file names, should refer to $base_dir,
-     *        examples: 'worker.php','lib/file.php'
-     * @param string $destination zip file name
-     * @param bool $overwrite
+     * @param string $base_dir Full path to directory which contain files
+     * @param array $files File names, path (both passesed and stored) is relative to $base_dir.
+     *        Examples: 'worker.php','lib/file.php'
+     * @param string $destination Zip file name.
+     * @param bool $overwrite Overwite existing file or not.
      * @return bool
      */
     public static function createZip($base_dir, $files = array(), $destination, $overwrite = false) {
@@ -105,6 +107,14 @@ class SimpleWorker{
         }
     }
 
+    /**
+     * Creates a zip archieve with all files and folders inside specific directory.
+     * @static
+     * @param string $directory
+     * @param string $destination
+     * @param bool $overwrite
+     * @return bool
+     */
     public static function zipDirectory($directory, $destination, $overwrite = false){
         if (!file_exists($directory) || !is_dir($directory)) return false;
         $directory = rtrim($directory, DIRECTORY_SEPARATOR);
@@ -130,7 +140,6 @@ class SimpleWorker{
             $date .= 'Z';
         }
         return $date;
-
     }
 
     public function setProjectId($project_id) {
@@ -181,6 +190,14 @@ class SimpleWorker{
         return json_decode($this->apiCall(self::GET, $url));
     }
 
+    /**
+     * Uploads your code package
+     * @param string $project_id
+     * @param string $filename this file will be launched as worker
+     * @param string $zipFilename zip file containing code to execute
+     * @param string $name referenceable (unique) name for your worker
+     * @return mixed
+     */
     public function postCode($project_id, $filename, $zipFilename, $name){
         $this->setProjectId($project_id);
         $this->setPostHeaders();
@@ -214,8 +231,7 @@ class SimpleWorker{
         $data .= 'Content-Disposition: form-data; name="file"; filename=$zipFilename' . $eol;
         $data .= 'Content-Type: text/plain' . $eol;
         $data .= 'Content-Transfer-Encoding: binary' . $eol . $eol;
-        $fileContent = $this->getFileContent($zipFilename);
-        $data .= $fileContent . $eol;
+        $data .= $this->getFileContent($zipFilename) . $eol;
         $data .= "--" . $mime_boundary . "--" . $eol . $eol; // finish with two eol's!!
  
         $params = array('http' => array(
@@ -421,8 +437,6 @@ class SimpleWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-
-        #$this->debug('postSchedule res', $res);
         $shedules = json_decode($res);
         return $shedules->schedules[0]->id;
     }
@@ -438,7 +452,6 @@ class SimpleWorker{
         foreach ($this->headers as $k => $v){
             $headers[] = "$k: $v";
         }
-        #$this->debug("headers", $headers);
         return $headers;
     }
 
