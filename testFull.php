@@ -7,7 +7,7 @@ function tolog($name, $variable, $display = false){
     if ($display){echo "{$name}: ".var_export($variable,true)."\n";}
 }
 
-$name = "testBasic.php-helloPHP-".microtime(true);
+$name = "testFull.php-".microtime(true);
 
 $project_id = ''; # using default project_id from config
 
@@ -31,9 +31,9 @@ tolog('post_project', $post_project_id, true);
 
 /*
 echo "\n--Deleting Project-------------------------------------\n";
-# TODO: {"msg":"Method DELETE not allowed","status_code":405}
+# TODO: {"msg":"Method not allowed","status_code":405}
 $res = $sw->deleteProject($project_id);
-tolog('delete_project', $res);
+tolog('delete_project', $res, true);
 */
 
 # =========================== Codes =============================
@@ -72,15 +72,11 @@ tolog('task_details', $details, true);
 
 echo "\n--Get Task Log----------------------------------------\n";
 sleep(15);
-$log = $sw->getLog($project_id, $task_id);
-tolog('task_log', $log, true);
-
-/*
-echo "\n--Deleting Task---------------------------------------\n";
-# TODO: <empty responce>
-$res = $sw->deleteTask($project_id, $task_id);
-tolog('delete_task', $res);
-*/
+# Check log only if task finished.
+if ($details->status != 'queued'){
+    $log = $sw->getLog($project_id, $task_id);
+    tolog('task_log', $log, true);
+}
 
 echo "\n--Set Task Progress-----------------------------------\n";
 $res = $sw->setTaskProgress($project_id, $task_id, 50, 'Job half-done');
@@ -88,12 +84,15 @@ tolog('set_task_progress', $res, true);
 
 /*
 echo "\n--Cancel Task-----------------------------------\n";
-# TODO: returns {"goto":"http://www.iron.io","version":"2.0.12"}
+# TODO: returns {"msg":"Not found","status_code":404}
 # or {"msg":"Method POST not allowed","status_code":405}
 $res = $sw->cancelTask($project_id, $task_id);
 tolog('cancel_task', $res, true);
 */
 
+echo "\n--Deleting Task---------------------------------------\n";
+$res = $sw->deleteTask($project_id, $task_id);
+tolog('delete_task', $res, true);
 
 # ========================== Schedules ==========================
 
@@ -107,16 +106,13 @@ tolog('post_schedule_simple', $schedule_id, true);
 
 echo "\n--Posting Advanced Shedule--------------------------------------\n";
 $start_at = SimpleWorker::dateRfc3339(time());
-echo ">>>$start_at<<<\n";
 $schedule_id = $sw->postScheduleAdvanced($project_id, $name, $start_at, 50, null, 4, 0);
 tolog('post_schedule_advanced', $schedule_id, true);
 
-/*
+
 echo "\n--Deleting Shedule-------------------------------------\n";
-# TODO: <empty responce>
 $res = $sw->deleteSchedule($project_id, $schedule_id);
 tolog('delete_schedule', $res, true);
-*/
 
 
 
