@@ -302,31 +302,33 @@ class SimpleWorker{
     /**
      * @param string $project_id
      * @param string $name
+     * @param array $payload
      * @param int $delay delay in seconds
      * @return string posted Schedule id
      */
-    public function postScheduleSimple($project_id, $name, $delay = 1){
-        return $this->postSchedule($project_id, $name, array('delay' => $delay));
+    public function postScheduleSimple($project_id, $name, $payload = array(), $delay = 1){
+        return $this->postSchedule($project_id, $name, array('delay' => $delay), $payload);
     }
 
     /**
      * @param string $project_id
      * @param string $name
-     * @param string $start_at Time of first run.
+     * @param array $payload
+     * @param int $start_at Time of first run in unix timestamp format. Example: time()+2*60
      * @param int $run_every Time in seconds between runs. If omitted, task will only run once.
-     * @param string $end_at Time tasks will stop being enqueued.
+     * @param int $end_at Time tasks will stop being enqueued in unix timestamp format.
      * @param int $run_times Number of times to run task.
      * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
      * @return string posted Schedule id
      */
-    public function postScheduleAdvanced($project_id, $name, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
+    public function postScheduleAdvanced($project_id, $name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
         $options = array();
-        $options['start_at'] = $start_at;
+        $options['start_at'] = self::dateRfc3339($start_at);
         if (!empty($run_every)) $options['run_every'] = $run_every;
-        if (!empty($end_at))    $options['end_at']    = $end_at;
+        if (!empty($end_at))    $options['end_at']    = self::dateRfc3339($end_at);
         if (!empty($run_times)) $options['run_times'] = $run_times;
         if (!empty($priority))  $options['priority']  = $priority;
-        return $this->postSchedule($project_id, $name, $options);
+        return $this->postSchedule($project_id, $name, $options, $payload);
     }
 
     public function postTask($project_id, $name, $payload = array()){
