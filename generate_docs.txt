@@ -1,0 +1,2 @@
+cd /path/to/PhpDocumentor-1.4.4
+phpdoc -f [iron_worker_php_DIR]/IronWorker.class.php -t [docs_DIR]/iron_worker_php -q -ti "IronWorker PHP documentation" -o HTML:frames:earthli
