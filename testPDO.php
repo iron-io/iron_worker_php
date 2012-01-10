@@ -14,7 +14,7 @@ $zipName = "code/$name.zip";
 
 $zipFile = SimpleWorker::zipDirectory(dirname(__FILE__)."/worker_examples/PDO", $zipName, true);
 
-$res = $sw->postCode($project_id, 'testPDO.php', $zipName, $name);
+$res = $sw->postCode($project_id, 'Pdo.php', $zipName, $name);
 print_r($res);
 
 $payload = array(

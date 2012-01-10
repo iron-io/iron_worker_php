@@ -105,8 +105,7 @@ $schedule_id = $sw->postScheduleSimple($project_id, $name, 10);
 tolog('post_schedule_simple', $schedule_id, true);
 
 echo "\n--Posting Advanced Shedule--------------------------------------\n";
-$start_at = SimpleWorker::dateRfc3339(time());
-$schedule_id = $sw->postScheduleAdvanced($project_id, $name, $start_at, 50, null, 4, 0);
+$schedule_id = $sw->postScheduleAdvanced($project_id, $name, array(), time()+2*60, 50, null, 4, 0);
 tolog('post_schedule_advanced', $schedule_id, true);
 
 

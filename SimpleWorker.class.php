@@ -29,7 +29,13 @@ class SimpleWorker{
 
     public  $debug_enabled = false;
 
-    private $required_config_fields = array('token','protocol','host','port','api_version');
+    private $required_config_fields = array('token');
+    private $default_values = array(
+        'protocol'    => 'http',
+        'host'        => 'worker-aws-us-east-1.iron.io',
+        'port'        => '80',
+        'api_version' => '2',
+    );
 
     private $url;
     private $token;
@@ -53,10 +59,11 @@ class SimpleWorker{
     function __construct($config_file_or_options){
         $config = $this->getConfigData($config_file_or_options);
         $token              = $config['token'];
-        $protocol           = $config['protocol'];
-        $host               = $config['host'];
-        $port               = $config['port'];
-        $api_version        = $config['api_version'];
+        $protocol           = empty($config['protocol'])   ? $this->default_values['protocol']    : $config['protocol'];
+        $host               = empty($config['host'])       ? $this->default_values['host']        : $config['host'];
+        $port               = empty($config['port'])       ? $this->default_values['port']        : $config['port'];
+        $api_version        = empty($config['api_version'])? $this->default_values['api_version'] : $config['api_version'];
+
         $default_project_id = empty($config['default_project_id'])?'':$config['default_project_id'];
 
         $this->url          = "$protocol://$host:$port/$api_version/";
@@ -302,31 +309,33 @@ class SimpleWorker{
     /**
      * @param string $project_id
      * @param string $name
+     * @param array $payload
      * @param int $delay delay in seconds
      * @return string posted Schedule id
      */
-    public function postScheduleSimple($project_id, $name, $delay = 1){
-        return $this->postSchedule($project_id, $name, array('delay' => $delay));
+    public function postScheduleSimple($project_id, $name, $payload = array(), $delay = 1){
+        return $this->postSchedule($project_id, $name, array('delay' => $delay), $payload);
     }
 
     /**
      * @param string $project_id
      * @param string $name
-     * @param string $start_at Time of first run.
+     * @param array $payload
+     * @param int $start_at Time of first run in unix timestamp format. Example: time()+2*60
      * @param int $run_every Time in seconds between runs. If omitted, task will only run once.
-     * @param string $end_at Time tasks will stop being enqueued.
+     * @param int $end_at Time tasks will stop being enqueued in unix timestamp format.
      * @param int $run_times Number of times to run task.
      * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
      * @return string posted Schedule id
      */
-    public function postScheduleAdvanced($project_id, $name, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
+    public function postScheduleAdvanced($project_id, $name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
         $options = array();
-        $options['start_at'] = $start_at;
+        $options['start_at'] = self::dateRfc3339($start_at);
         if (!empty($run_every)) $options['run_every'] = $run_every;
-        if (!empty($end_at))    $options['end_at']    = $end_at;
+        if (!empty($end_at))    $options['end_at']    = self::dateRfc3339($end_at);
         if (!empty($run_times)) $options['run_times'] = $run_times;
         if (!empty($priority))  $options['priority']  = $priority;
-        return $this->postSchedule($project_id, $name, $options);
+        return $this->postSchedule($project_id, $name, $options, $payload);
     }
 
     public function postTask($project_id, $name, $payload = array()){
