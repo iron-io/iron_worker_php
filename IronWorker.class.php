@@ -1,5 +1,19 @@
 <?php
+/**
+ * PHP client for IronWorker
+ * IronWorker is a massively scalable background processing system.
+ *
+ * @link https://github.com/iron-io/iron_worker_php
+ * @link http://www.iron.io/
+ * @link http://docs.iron.io/
+ * @version 1.0
+ * @package IronWorkerPHP
+ * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
+ */
 
+/**
+ * The Http_Exception class represents an HTTP response status that is not 200 OK.
+ */
 class Http_Exception extends Exception{
     const NOT_MODIFIED = 304;
     const BAD_REQUEST = 400;
@@ -9,10 +23,10 @@ class Http_Exception extends Exception{
     const PRECONDITION_FAILED = 412;
     const INTERNAL_ERROR = 500;
 }
-class IronWorker_Exception extends Exception{
 
-}
-
+/**
+ * Class that wraps IronWorker API calls.
+ */
 class IronWorker{
 
     //Header Constants
@@ -47,6 +61,7 @@ class IronWorker{
      * @param string|array $config_file_or_options
      *        Array of options or name of config file.
      * Fields in options array or in config:
+     *
      * Required:
      * - token
      * Optional:
@@ -75,6 +90,12 @@ class IronWorker{
 
     /**
      * Creates a zip archieve from array of file names
+     *
+     * Example:
+     * <code>
+     * IronWorker::createZip(dirname(__FILE__), array('HelloWorld.php'), 'worker.zip', true);
+     * </code>
+     *
      * @static
      * @param string $base_dir Full path to directory which contain files
      * @param array $files File names, path (both passesed and stored) is relative to $base_dir.
@@ -116,6 +137,12 @@ class IronWorker{
 
     /**
      * Creates a zip archieve with all files and folders inside specific directory.
+     *
+     * Example:
+     * <code>
+     * IronWorker::zipDirectory(dirname(__FILE__)."/worker/", 'worker.zip', true);
+     * </code>
+     *
      * @static
      * @param string $directory
      * @param string $destination
@@ -131,22 +158,6 @@ class IronWorker{
         if (empty($files)) return false;
 
         return self::createZip($directory, $files, $destination, $overwrite);
-    }
-
-    public static function dateRfc3339($timestamp = 0) {
-
-        if (!$timestamp) {
-            $timestamp = time();
-        }
-        $date = date('Y-m-d\TH:i:s', $timestamp);
-
-        $matches = array();
-        if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
-            $date .= $matches[1].$matches[2].':'.$matches[3];
-        } else {
-            $date .= 'Z';
-        }
-        return $date;
     }
 
     public function setProjectId($project_id) {
@@ -331,13 +342,13 @@ class IronWorker{
     }
 
     /**
-     * Schedule task
+     * Schedules task
      *
      * @param string $project_id Project ID or empty string
      * @param string $name Package name
      * @param array $payload Payload for task
-     * @param int $delay delay in seconds
-     * @return string posted Schedule id
+     * @param int $delay Delay in seconds
+     * @return string Created Schedule id
      */
     public function postScheduleSimple($project_id, $name, $payload = array(), $delay = 1){
         return $this->postSchedule($project_id, $name, array('delay' => $delay), $payload);
@@ -354,7 +365,7 @@ class IronWorker{
      * @param int $end_at Time tasks will stop being enqueued in unix timestamp format.
      * @param int $run_times Number of times to run task.
      * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
-     * @return string posted Schedule id
+     * @return string Created Schedule id
      */
     public function postScheduleAdvanced($project_id, $name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
         $options = array();
@@ -366,6 +377,14 @@ class IronWorker{
         return $this->postSchedule($project_id, $name, $options, $payload);
     }
 
+    /**
+     * Queues already uploaded worker
+     *
+     * @param string $project_id Project ID or empty string
+     * @param string $name Package name
+     * @param array $payload
+     * @return string Created Task ID
+     */
     public function postTask($project_id, $name, $payload = array()){
         $this->setProjectId($project_id);
         $url = "projects/{$this->project_id}/tasks";
@@ -382,7 +401,6 @@ class IronWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-        #$this->debug('postTask res', $res);
         $tasks = json_decode($res);
         return $tasks->tasks[0]->id;
     }
@@ -631,5 +649,21 @@ class IronWorker{
              }
         }
         return $names;
+    }
+
+    private static function dateRfc3339($timestamp = 0) {
+
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+        $date = date('Y-m-d\TH:i:s', $timestamp);
+
+        $matches = array();
+        if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
+            $date .= $matches[1].$matches[2].':'.$matches[3];
+        } else {
+            $date .= 'Z';
+        }
+        return $date;
     }
 }
