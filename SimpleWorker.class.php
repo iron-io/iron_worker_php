@@ -29,7 +29,13 @@ class SimpleWorker{
 
     public  $debug_enabled = false;
 
-    private $required_config_fields = array('token','protocol','host','port','api_version');
+    private $required_config_fields = array('token');
+    private $default_values = array(
+        'protocol'    => 'http',
+        'host'        => 'worker-aws-us-east-1.iron.io',
+        'port'        => '80',
+        'api_version' => '2',
+    );
 
     private $url;
     private $token;
@@ -53,10 +59,11 @@ class SimpleWorker{
     function __construct($config_file_or_options){
         $config = $this->getConfigData($config_file_or_options);
         $token              = $config['token'];
-        $protocol           = $config['protocol'];
-        $host               = $config['host'];
-        $port               = $config['port'];
-        $api_version        = $config['api_version'];
+        $protocol           = empty($config['protocol'])   ? $this->default_values['protocol']    : $config['protocol'];
+        $host               = empty($config['host'])       ? $this->default_values['host']        : $config['host'];
+        $port               = empty($config['port'])       ? $this->default_values['port']        : $config['port'];
+        $api_version        = empty($config['api_version'])? $this->default_values['api_version'] : $config['api_version'];
+
         $default_project_id = empty($config['default_project_id'])?'':$config['default_project_id'];
 
         $this->url          = "$protocol://$host:$port/$api_version/";
