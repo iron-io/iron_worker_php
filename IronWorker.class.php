@@ -9,14 +9,14 @@ class Http_Exception extends Exception{
     const PRECONDITION_FAILED = 412;
     const INTERNAL_ERROR = 500;
 }
-class SimpleWorker_Exception extends Exception{
+class IronWorker_Exception extends Exception{
 
 }
 
-class SimpleWorker{
+class IronWorker{
 
     //Header Constants
-    const header_user_agent = "SimpleWorker PHP v0.1";
+    const header_user_agent = "IronWorker PHP v0.1";
     const header_accept = "application/json";
     const header_accept_encoding = "gzip, deflate";
     const HTTP_OK = 200;
@@ -49,12 +49,12 @@ class SimpleWorker{
      * Fields in options array or in config:
      * Required:
      * - token
+     * Optional:
      * - protocol
      * - host
      * - port
      * - api_version
-     * Optional:
-     * - default_project_id
+     * - project_id
      */
     function __construct($config_file_or_options){
         $config = $this->getConfigData($config_file_or_options);
@@ -64,13 +64,13 @@ class SimpleWorker{
         $port               = empty($config['port'])       ? $this->default_values['port']        : $config['port'];
         $api_version        = empty($config['api_version'])? $this->default_values['api_version'] : $config['api_version'];
 
-        $default_project_id = empty($config['default_project_id'])?'':$config['default_project_id'];
+        $project_id = empty($config['project_id'])?'':$config['project_id'];
 
         $this->url          = "$protocol://$host:$port/$api_version/";
         $this->token        = $token;
         $this->api_version  = $api_version;
         $this->version      = $api_version;
-        $this->project_id   = $default_project_id;
+        $this->project_id   = $project_id;
     }
 
     /**
@@ -540,10 +540,10 @@ class SimpleWorker{
             if ($ini === false){
                 throw new InvalidArgumentException("Config file $config_file_or_options not found");
             }
-            if (empty($ini['simple_worker'])){
-                throw new InvalidArgumentException("Config file $config_file_or_options has no section 'simple_worker'");
+            if (empty($ini['iron_worker'])){
+                throw new InvalidArgumentException("Config file $config_file_or_options has no section 'iron_worker'");
             }
-            $config =  $ini['simple_worker'];
+            $config =  $ini['iron_worker'];
         }elseif(is_array($config_file_or_options)){
             $config = $config_file_or_options;
         }else{

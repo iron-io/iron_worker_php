@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__)."/lib/S3.php";
+require_once dirname(__FILE__) . "/lib/S3.php";
 
 function getArgs(){
     global $argv;

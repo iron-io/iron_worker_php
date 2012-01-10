@@ -1,8 +1,8 @@
 <?php
 	
-require_once dirname(__FILE__).'/lib/redis.php';
-require_once dirname(__FILE__).'/lib/redis.pool.php';
-require_once dirname(__FILE__).'/lib/redis.peer.php';
+require_once dirname(__FILE__) . '/lib/redis.php';
+require_once dirname(__FILE__) . '/lib/redis.pool.php';
+require_once dirname(__FILE__) . '/lib/redis.peer.php';
 
 $redis_pool = array(
 	'master' => array('full.host.name', 6379)

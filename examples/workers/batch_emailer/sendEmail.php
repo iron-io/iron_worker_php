@@ -11,7 +11,7 @@ function getPayload($argv){
 
 $payload = getPayload($argv);
 
-require_once(dirname(__FILE__).'/lib/class.phpmailer.php');
+require_once(dirname(__FILE__) . '/lib/class.phpmailer.php');
 
 $mail  = new PHPMailer(); // defaults to using php "mail()"
 

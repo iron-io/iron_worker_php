@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__)."/lib/TwitterOAuth.php";
+require_once dirname(__FILE__) . "/lib/TwitterOAuth.php";
 
 function shortenUrl($url){
     return file_get_contents("http://is.gd/create.php?format=simple&url=".urlencode($url));
