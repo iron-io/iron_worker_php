@@ -30,8 +30,10 @@ $iw = new IronWorker(array(
     'project_id' => 'XXXXXXXXX'
 ));
 ```
-* Passing ini file name which store your configuration options. Rename sample_config.ini to config.ini and include your Iron.io credentials (token and project_id):
-HelloWorld.php:
+* Passing ini file name which store your configuration options. Rename sample_config.ini to config.ini and include your Iron.io credentials (`token` and `project_id`):
+
+`HelloWorld.php`:
+
 ```php
 <?php
 $iw = new IronWorker('config.ini');
