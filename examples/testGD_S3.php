@@ -3,9 +3,9 @@ include("../IronWorker.class.php");
 
 $config = parse_ini_file('config.ini', true);
 
-$name = "testGD_S3.php-".microtime(true);
+$name = "testGD_S3.php";
 
-$iw = new IronWorker('config_sw.ini');
+$iw = new IronWorker('config.ini');
 
 # using default project_id from config
 $project_id = "";

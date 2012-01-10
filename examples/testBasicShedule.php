@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testBasic.php";
+$name = "testBasic-Schedule-php";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;
@@ -22,7 +22,12 @@ $payload = array(
 $start_at = time()+3*60;
 
 # Run task every 2 minutes 10 times
-$iw->postScheduleAdvanced($project_id, $name, $payload, $start_at, 2*60, null, 10);
+$schedule_id = $iw->postScheduleAdvanced($project_id, $name, $payload, $start_at, 2*60, null, 10);
+
+# Get schedule information
+$schedule = $iw->getSchedule($project_id, $schedule_id);
+echo "Schedule:\n";
+print_r($schedule);
 
 echo "\ndone\n";
 

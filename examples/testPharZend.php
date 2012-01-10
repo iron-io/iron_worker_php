@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testPharZend.php-helloPHP-".microtime(true);
+$name = "testPharZend.php";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;

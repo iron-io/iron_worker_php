@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testRedis.php-".microtime(true);
+$name = "testRedis-PHP";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;

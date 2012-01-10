@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testTaskSimple.php-".microtime(true);
+$name = "testTaskSimple-php";
 
 $iw = new IronWorker('config.ini');
 

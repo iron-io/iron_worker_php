@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testFFmpeg.php-".microtime(true);
+$name = "testFFmpeg-php";
 
 $iw = new IronWorker('config.ini');
 

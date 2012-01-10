@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testBasic.php-helloPHP-".microtime(true);
+$name = "testBasic-php";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;

@@ -7,7 +7,7 @@ function tolog($name, $variable, $display = false){
     if ($display){echo "{$name}: ".var_export($variable,true)."\n";}
 }
 
-$name = "testFull.php-".microtime(true);
+$name = "testFull-php";
 
 $project_id = ''; # using default project_id from config
 

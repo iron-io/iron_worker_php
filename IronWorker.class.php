@@ -199,8 +199,9 @@ class IronWorker{
 
     /**
      * Uploads your code package
-     * @param string $project_id
-     * @param string $filename this file will be launched as worker
+     *
+     * @param string $project_id Project ID or empty string
+     * @param string $filename This file will be launched as worker
      * @param string $zipFilename zip file containing code to execute
      * @param string $name referenceable (unique) name for your worker
      * @return mixed
@@ -222,12 +223,10 @@ class IronWorker{
             "oauth" => $this->token,
             "class_name" => $name,
             "options" => array(),
-            "access_key" => $name);
+            "access_key" => $name
+        );
 
         $sendingData = json_encode($sendingData);
-
-        // For reference to multi-part encoding in php, see:
-        //    http://vedovini.net/2009/08/posting-multipart-form-data-using-php/
         $eol = "\r\n";
         $data = '';
         $mime_boundary = md5(time());
@@ -298,6 +297,12 @@ class IronWorker{
         return $this->apiCall(self::DELETE, $url, $request);
     }
 
+    /**
+     * Get information about all schedules for project
+     *
+     * @param string $project_id Project ID or empty string
+     * @return mixed
+     */
     public function getSchedules($project_id){
         $this->setProjectId($project_id);
         $this->setJsonHeaders();
@@ -307,9 +312,30 @@ class IronWorker{
     }
 
     /**
-     * @param string $project_id
-     * @param string $name
-     * @param array $payload
+     * Get information about schedule
+     *
+     * @param string $project_id Project ID or empty string
+     * @param string $schedule_id Schedule ID
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function getSchedule($project_id, $schedule_id){
+        $this->setProjectId($project_id);
+        if (empty($schedule_id)){
+            throw new InvalidArgumentException("Please set schedule_id");
+        }
+        $this->setJsonHeaders();
+        $url = "projects/{$this->project_id}/schedules/$schedule_id";
+
+        return json_decode($this->apiCall(self::GET, $url));
+    }
+
+    /**
+     * Schedule task
+     *
+     * @param string $project_id Project ID or empty string
+     * @param string $name Package name
+     * @param array $payload Payload for task
      * @param int $delay delay in seconds
      * @return string posted Schedule id
      */
@@ -318,9 +344,11 @@ class IronWorker{
     }
 
     /**
-     * @param string $project_id
-     * @param string $name
-     * @param array $payload
+     * Schedules task
+     *
+     * @param string $project_id Project ID or empty string
+     * @param string $name Package name
+     * @param array $payload Payload for task
      * @param int $start_at Time of first run in unix timestamp format. Example: time()+2*60
      * @param int $run_every Time in seconds between runs. If omitted, task will only run once.
      * @param int $end_at Time tasks will stop being enqueued in unix timestamp format.

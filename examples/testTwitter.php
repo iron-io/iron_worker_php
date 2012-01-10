@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "postToTwitter.php-".microtime(true);
+$name = "postToTwitter-php";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;

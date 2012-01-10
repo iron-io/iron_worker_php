@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "sendEmail.php-".microtime(true);
+$name = "sendEmail-php";
 
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;

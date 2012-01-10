@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testPDO.php-".microtime(true);
+$name = "testPDO.php";
 
 $config = parse_ini_file('config.ini', true);
 
