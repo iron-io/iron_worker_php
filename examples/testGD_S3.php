@@ -7,15 +7,12 @@ $name = "testGD_S3.php";
 
 $iw = new IronWorker('config.ini');
 
-# using default project_id from config
-$project_id = "";
-
 # Creating zip package.
 $zipName = "code/$name.zip";
 IronWorker::zipDirectory(dirname(__FILE__)."/workers/draw_gd_and_upload_to_s3", $zipName, true);
 
 # Posting package.
-$res = $iw->postCode($project_id, 'gd_s3.php', $zipName, $name);
+$res = $iw->postCode('gd_s3.php', $zipName, $name);
 
 
 $payload = array(
@@ -29,13 +26,13 @@ $payload = array(
 );
 
 # Adding new task.
-$task_id = $iw->postTask($project_id, $name, $payload);
+$task_id = $iw->postTask($name, $payload);
 echo "task_id = $task_id \n";
 
 sleep(10);
 
-$details = $iw->getTaskDetails($project_id, $task_id);
+$details = $iw->getTaskDetails($task_id);
 print_r($details);
-$log = $iw->getLog($project_id, $task_id);
+$log = $iw->getLog($task_id);
 print_r($log);
 

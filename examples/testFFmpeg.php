@@ -10,16 +10,16 @@ $zipName = "code/$name.zip";
 IronWorker::zipDirectory(dirname(__FILE__)."/workers/ffmpeg", $zipName, true);
 
 # Posting package.
-$res = $iw->postCode('', 'ffmpeg.php', $zipName, $name);
+$res = $iw->postCode('ffmpeg.php', $zipName, $name);
 
 # Adding new task.
-$task_id = $iw->postTask('', $name);
+$task_id = $iw->postTask($name);
 echo "task_id = $task_id \n";
 
 sleep(10);
 
-$details = $iw->getTaskDetails('', $task_id);
+$details = $iw->getTaskDetails($task_id);
 print_r($details);
-$log = $iw->getLog('', $task_id);
+$log = $iw->getLog($task_id);
 print_r($log);
 

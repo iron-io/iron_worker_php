@@ -61,7 +61,7 @@ IronWorker::zipDirectory(dirname(__FILE__)."/hello_world/", 'worker.zip', true);
 
 ```php
 <?php
-$res = $iw->postCode($project_id, 'HelloWorld.php', 'worker.zip', 'HelloWorld');
+$res = $iw->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
 ```
 Where 'HelloWorld' is a worker name which should be used later for queueing and sheduling.
 
@@ -69,7 +69,7 @@ Where 'HelloWorld' is a worker name which should be used later for queueing and 
 
 ```php
 <?php
-$task_id = $iw->postTask($project_id, 'HelloWorld');
+$task_id = $iw->postTask('HelloWorld');
 ```
 Worker should start in a few seconds.
 
@@ -82,7 +82,7 @@ If you want to run your code more than once or run it in regular intervals, you 
 $start_at = time() + 3*60;
 
 # Run task every 2 minutes, repeat 10 times
-$iw->postScheduleAdvanced($project_id, 'HelloWorld', array(), $start_at, 2*60, null, 10);
+$iw->postScheduleAdvanced('HelloWorld', array(), $start_at, 2*60, null, 10);
 ```
 
 ## Status of a Worker
@@ -90,8 +90,8 @@ To get the status of a worker, you can use the ```getTaskDetails()``` method.
 
 ```php
 <?php
-$task_id = $iw->postTask($project_id, 'HelloWorld');
-$details = $iw->getTaskDetails($project_id, $task_id);
+$task_id = $iw->postTask('HelloWorld');
+$details = $iw->getTaskDetails($task_id);
 
 echo $details->status; # prints 'queued', 'complete' or 'error'
 ```
@@ -102,12 +102,12 @@ Use any function that print text inside your worker to put messages to log.
 
 ```php
 <?php
-$task_id = $iw->postTask($project_id, 'HelloWorld');
+$task_id = $iw->postTask('HelloWorld');
 sleep(10);
-$details = $iw->getTaskDetails($project_id, $task_id);
+$details = $iw->getTaskDetails($task_id);
 # Check log only if task is finished.
 if ($details->status != 'queued'){
-    $log = $iw->getLog($project_id, $task_id);
+    $log = $iw->getLog($task_id);
     echo $log; # prints "Hello PHP World!"
 }
 ```
@@ -127,11 +127,11 @@ $payload = array(
     )
 );
 
-$iw->postTask($project_id, 'HelloWorld', $payload);
+$iw->postTask('HelloWorld', $payload);
 
-$iw->postScheduleSimple($project_id, 'HelloWorld', $payload, 10)
+$iw->postScheduleSimple('HelloWorld', $payload, 10)
 
-$iw->postScheduleAdvanced($project_id, 'HelloWorld', $payload, time()+3*60, 2*60, null, 5);
+$iw->postScheduleAdvanced('HelloWorld', $payload, time()+3*60, 2*60, null, 5);
 ```
 
 When your code is executed, it will be passed three program arguments:
@@ -166,3 +166,9 @@ print_r($args);
 
 ```
 
+### Full Documentation
+
+You can find full documentation here:
+
+* http://docs.iron.io Full documetation for iron.io products.
+* http://iron-io.github.com/iron_worker_php/ IronWorker PHP reference.

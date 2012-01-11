@@ -6,12 +6,11 @@ $name = "testBasic-Schedule-php";
 $iw = new IronWorker('config.ini');
 $iw->debug_enabled = true;
 
-$project_id = ""; # using default project_id from config
 $zipName = "code/$name.zip";
 $files_to_zip = array('testTask.php');
 $zipFile = IronWorker::createZip(dirname(__FILE__)."/workers/hello_world", $files_to_zip, $zipName, true);
 if (!$zipFile) die("Zip file $zipName was not created!");
-$res = $iw->postCode($project_id, 'testTask.php', $zipName, $name);
+$res = $iw->postCode('testTask.php', $zipName, $name);
 
 $payload = array(
     'key_one' => 'Payload',
@@ -22,10 +21,10 @@ $payload = array(
 $start_at = time()+3*60;
 
 # Run task every 2 minutes 10 times
-$schedule_id = $iw->postScheduleAdvanced($project_id, $name, $payload, $start_at, 2*60, null, 10);
+$schedule_id = $iw->postScheduleAdvanced($name, $payload, $start_at, 2*60, null, 10);
 
 # Get schedule information
-$schedule = $iw->getSchedule($project_id, $schedule_id);
+$schedule = $iw->getSchedule($schedule_id);
 echo "Schedule:\n";
 print_r($schedule);
 

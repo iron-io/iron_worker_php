@@ -25,6 +25,34 @@ class Http_Exception extends Exception{
 }
 
 /**
+ * The JSON_Exception class represents an failures of decoding json strings.
+ */
+class JSON_Exception extends Exception {
+    public $error = null;
+    public $error_code = JSON_ERROR_NONE;
+
+    function __construct($error_code) {
+        $this->error_code = $error_code;
+        switch($error_code) {
+            case JSON_ERROR_DEPTH:
+                $this->error = 'Maximum stack depth exceeded.';
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $this->error = "Unexpected control characted found.";
+                break;
+            case JSON_ERROR_SYNTAX:
+                $this->error = "Syntax error, malformed JSON";
+                break;
+        }
+        parent::__construct();
+    }
+
+    function __toString() {
+        return $this->error;
+    }
+}
+
+/**
  * Class that wraps IronWorker API calls.
  */
 class IronWorker{
@@ -43,7 +71,7 @@ class IronWorker{
 
     public  $debug_enabled = false;
 
-    private $required_config_fields = array('token');
+    private $required_config_fields = array('token','project_id');
     private $default_values = array(
         'protocol'    => 'http',
         'host'        => 'worker-aws-us-east-1.iron.io',
@@ -64,22 +92,22 @@ class IronWorker{
      *
      * Required:
      * - token
+     * - project_id
      * Optional:
      * - protocol
      * - host
      * - port
      * - api_version
-     * - project_id
      */
     function __construct($config_file_or_options){
         $config = $this->getConfigData($config_file_or_options);
         $token              = $config['token'];
+        $project_id         = $config['project_id'];
+
         $protocol           = empty($config['protocol'])   ? $this->default_values['protocol']    : $config['protocol'];
         $host               = empty($config['host'])       ? $this->default_values['host']        : $config['host'];
         $port               = empty($config['port'])       ? $this->default_values['port']        : $config['port'];
         $api_version        = empty($config['api_version'])? $this->default_values['api_version'] : $config['api_version'];
-
-        $project_id = empty($config['project_id'])?'':$config['project_id'];
 
         $this->url          = "$protocol://$host:$port/$api_version/";
         $this->token        = $token;
@@ -171,54 +199,48 @@ class IronWorker{
 
     public function getProjects(){
         $this->setJsonHeaders();
-        $projects = json_decode($this->apiCall(self::GET, 'projects'));
+        $projects = self::json_decode($this->apiCall(self::GET, 'projects'));
         return $projects->projects;
     }
 
-    public function getTasks($project_id = ''){
-        $this->setProjectId($project_id);
+    public function getTasks(){
         $url = "projects/{$this->project_id}/tasks";
         $this->setJsonHeaders();
-        $task = json_decode($this->apiCall(self::GET, $url));
+        $task = self::json_decode($this->apiCall(self::GET, $url));
         return $task->tasks;
     }
 
-    public function getProjectDetails($project_id = ''){
-        $this->setProjectId($project_id);
+    public function getProjectDetails(){
         $this->setJsonHeaders();
         $url =  "projects/{$this->project_id}";
         return json_decode($this->apiCall(self::GET, $url));
     }
 
-    public function getCodes($project_id = ''){
-        $this->setProjectId($project_id);
+    public function getCodes(){
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/codes";
-        $codes = json_decode($this->apiCall(self::GET, $url));
+        $codes = self::json_decode($this->apiCall(self::GET, $url));
         return $codes->codes;
     }
 
-    public function getCodeDetails($code_id, $project_id = ''){
+    public function getCodeDetails($code_id){
         if (empty($code_id)){
             throw new InvalidArgumentException("Please set code_id");
         }
-        $this->setProjectId($project_id);   
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/codes/$code_id";
-        return json_decode($this->apiCall(self::GET, $url));
+        return self::json_decode($this->apiCall(self::GET, $url));
     }
 
     /**
      * Uploads your code package
      *
-     * @param string $project_id Project ID or empty string
      * @param string $filename This file will be launched as worker
      * @param string $zipFilename zip file containing code to execute
      * @param string $name referenceable (unique) name for your worker
      * @return mixed
      */
-    public function postCode($project_id, $filename, $zipFilename, $name){
-        $this->setProjectId($project_id);
+    public function postCode($filename, $zipFilename, $name){
         $this->setPostHeaders();
         $this->headers['Content-Length'] = filesize($zipFilename);
         $ts = time();
@@ -261,7 +283,7 @@ class IronWorker{
         $this->debug('destination', $destination);
 
         $response = file_get_contents($destination, false, $ctx);
-        return json_decode($response);
+        return self::json_decode($response);
     }
 
 
@@ -272,24 +294,21 @@ class IronWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, 'projects', $request);
-        $responce = json_decode($res);
+        $responce = self::json_decode($res);
         return $responce->id;
     }
 
-    public function deleteProject($project_id){
-        $this->setProjectId($project_id);
+    public function deleteProject(){
         $url = "projects/{$this->project_id}";
         return $this->apiCall(self::DELETE, $url);
     }
 
-    public function deleteCode($project_id, $code_id){
-        $this->setProjectId($project_id);
+    public function deleteCode($code_id){
         $url = "projects/{$this->project_id}/codes/$code_id";
         return $this->apiCall(self::DELETE, $url);
     }
 
-    public function deleteTask($project_id, $task_id){
-        $this->setProjectId($project_id);
+    public function deleteTask($task_id){
         $this->setCommonHeaders();
         $this->headers['Accept'] = "text/plain";
         unset($this->headers['Content-Type']);
@@ -297,8 +316,7 @@ class IronWorker{
         return $this->apiCall(self::DELETE, $url);
     }
 
-    public function deleteSchedule($project_id, $schedule_id){
-        $this->setProjectId($project_id);
+    public function deleteSchedule($schedule_id){
         $url = "projects/{$this->project_id}/schedules/$schedule_id";
 
         $request = array(
@@ -311,53 +329,47 @@ class IronWorker{
     /**
      * Get information about all schedules for project
      *
-     * @param string $project_id Project ID or empty string
      * @return mixed
      */
-    public function getSchedules($project_id){
-        $this->setProjectId($project_id);
+    public function getSchedules(){
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/schedules";
-        $schedules = json_decode($this->apiCall(self::GET, $url));
+        $schedules = self::json_decode($this->apiCall(self::GET, $url));
         return $schedules->schedules;
     }
 
     /**
      * Get information about schedule
      *
-     * @param string $project_id Project ID or empty string
      * @param string $schedule_id Schedule ID
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function getSchedule($project_id, $schedule_id){
-        $this->setProjectId($project_id);
+    public function getSchedule($schedule_id){
         if (empty($schedule_id)){
             throw new InvalidArgumentException("Please set schedule_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/schedules/$schedule_id";
 
-        return json_decode($this->apiCall(self::GET, $url));
+        return self::json_decode($this->apiCall(self::GET, $url));
     }
 
     /**
      * Schedules task
      *
-     * @param string $project_id Project ID or empty string
      * @param string $name Package name
      * @param array $payload Payload for task
      * @param int $delay Delay in seconds
      * @return string Created Schedule id
      */
-    public function postScheduleSimple($project_id, $name, $payload = array(), $delay = 1){
-        return $this->postSchedule($project_id, $name, array('delay' => $delay), $payload);
+    public function postScheduleSimple($name, $payload = array(), $delay = 1){
+        return $this->postSchedule($name, array('delay' => $delay), $payload);
     }
 
     /**
      * Schedules task
      *
-     * @param string $project_id Project ID or empty string
      * @param string $name Package name
      * @param array $payload Payload for task
      * @param int $start_at Time of first run in unix timestamp format. Example: time()+2*60
@@ -367,26 +379,24 @@ class IronWorker{
      * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
      * @return string Created Schedule id
      */
-    public function postScheduleAdvanced($project_id, $name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
+    public function postScheduleAdvanced($name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
         $options = array();
         $options['start_at'] = self::dateRfc3339($start_at);
         if (!empty($run_every)) $options['run_every'] = $run_every;
         if (!empty($end_at))    $options['end_at']    = self::dateRfc3339($end_at);
         if (!empty($run_times)) $options['run_times'] = $run_times;
         if (!empty($priority))  $options['priority']  = $priority;
-        return $this->postSchedule($project_id, $name, $options, $payload);
+        return $this->postSchedule($name, $options, $payload);
     }
 
     /**
      * Queues already uploaded worker
      *
-     * @param string $project_id Project ID or empty string
      * @param string $name Package name
      * @param array $payload
      * @return string Created Task ID
      */
-    public function postTask($project_id, $name, $payload = array()){
-        $this->setProjectId($project_id);
+    public function postTask($name, $payload = array()){
         $url = "projects/{$this->project_id}/tasks";
 
         $request = array(
@@ -401,12 +411,11 @@ class IronWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-        $tasks = json_decode($res);
+        $tasks = self::json_decode($res);
         return $tasks->tasks[0]->id;
     }
 
-    public function getLog($project_id, $task_id){
-        $this->setProjectId($project_id);
+    public function getLog($task_id){
         if (empty($task_id)){
             throw new InvalidArgumentException("Please set task_id");
         }
@@ -417,19 +426,16 @@ class IronWorker{
         return $this->apiCall(self::GET, $url);
     }
 
-    public function getTaskDetails($project_id, $task_id){
-        $this->setProjectId($project_id);
+    public function getTaskDetails($task_id){
         if (empty($task_id)){
             throw new InvalidArgumentException("Please set task_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/tasks/$task_id";
-        return json_decode($this->apiCall(self::GET, $url));
+        return self::json_decode($this->apiCall(self::GET, $url));
     }
 
-
-    public function cancelTask($project_id, $task_id){
-        $this->setProjectId($project_id);
+    public function cancelTask($task_id){
         if (empty($task_id)){
             throw new InvalidArgumentException("Please set task_id");
         }
@@ -438,12 +444,10 @@ class IronWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-        $responce = json_decode($res);
-        return $responce;
+        return self::json_decode($res);
     }
 
-    public function setTaskProgress($project_id, $task_id, $percent, $msg = ''){
-        $this->setProjectId($project_id);
+    public function setTaskProgress($task_id, $percent, $msg = ''){
         if (empty($task_id)){
             throw new InvalidArgumentException("Please set task_id");
         }
@@ -454,16 +458,13 @@ class IronWorker{
         );
 
         $this->setCommonHeaders();
-        $res = $this->apiCall(self::POST, $url, $request);
-        $responce = json_decode($res);
-        return $responce;
+        return self::json_decode($this->apiCall(self::POST, $url, $request));
     }
 
     /* PRIVATE FUNCTIONS */
 
     /**
      *
-     * @param string $project_id
      * @param string $name
      * @param array $options options contain:
      *   start_at OR delay — required - start_at is time of first run. Delay is number of seconds to wait before starting.
@@ -474,11 +475,8 @@ class IronWorker{
      * @param array $payload
      * @return mixed
      */
-    private function postSchedule($project_id, $name, $options, $payload = array()){
-
-        $this->setProjectId($project_id);
+    private function postSchedule($name, $options, $payload = array()){
         $url = "projects/{$this->project_id}/schedules";
-
         $shedule = array(
            'name' => $name,
            'code_name' => $name,
@@ -492,7 +490,7 @@ class IronWorker{
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
-        $shedules = json_decode($res);
+        $shedules = self::json_decode($res);
         return $shedules->schedules[0]->id;
     }
 
@@ -665,5 +663,14 @@ class IronWorker{
             $date .= 'Z';
         }
         return $date;
+    }
+
+    private static function json_decode($response){
+        $data = json_decode($response);
+        $json_error = json_last_error();
+        if($json_error != JSON_ERROR_NONE) {
+            throw new JSON_Exception($json_error);
+        }
+        return $data;
     }
 }
