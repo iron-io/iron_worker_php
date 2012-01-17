@@ -1,6 +1,7 @@
 iron_worker_php is PHP language binding for IronWorker.
 
 IronWorker is a massively scalable background processing system.
+[See How It Works](http://www.iron.io/products/worker/how)
 
 # Getting Started
 
@@ -30,7 +31,7 @@ $iw = new IronWorker(array(
     'project_id' => 'XXXXXXXXX'
 ));
 ```
-* Passing ini file name which store your configuration options. Rename sample_config.ini to config.ini and include your Iron.io credentials (`token` and `project_id`):
+* Passing ini file name which stores your configuration options. Rename sample_config.ini to config.ini and include your Iron.io credentials (`token` and `project_id`):
 
 ```php
 <?php
@@ -93,7 +94,7 @@ To get the status of a worker, you can use the ```getTaskDetails()``` method.
 $task_id = $iw->postTask('HelloWorld');
 $details = $iw->getTaskDetails($task_id);
 
-echo $details->status; # prints 'queued', 'complete' or 'error'
+echo $details->status; # prints 'queued', 'complete', 'error' etc.
 ```
 
 ## Get Worker Log
@@ -166,9 +167,10 @@ print_r($args);
 
 ```
 
-### Full Documentation
+# Full Documentation
 
-You can find full documentation here:
+You can find more documentation here:
 
 * http://docs.iron.io Full documetation for iron.io products.
-* http://iron-io.github.com/iron_worker_php/ IronWorker PHP reference.
+* [IronWorker PHP reference](http://iron-io.github.com/iron_worker_php/).
+* [IronWorker PHP Wiki pages](https://github.com/iron-io/iron_worker_php/wiki).

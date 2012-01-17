@@ -1,5 +1,7 @@
 log/*.log
 code/*.zip
+examples/code/*.zip
+examples/log/*.log
 *.log
 out-*.txt
 tmp/
