@@ -141,24 +141,10 @@ When your code is executed, it will be passed three program arguments:
 * **-payload** - the filename containing the data payload for this particular task.
 * **-d** - the user writable directory that can be used while running your job.
 
-Copy this code to a worker to use program arguments:
+IronWorker provide functions `getArgs()` and `getPayload()` in your worker to help you using payload:
 
 ```php
 <?php
-function getArgs(){
-    global $argv;
-    $args = array('task_id' => null, 'dir' => null, 'payload' => array());
-    foreach($argv as $k => $v){
-        if (empty($argv[$k+1])) continue;
-        if ($v == '-id') $args['task_id'] = $argv[$k+1];
-        if ($v == '-d')  $args['dir']     = $argv[$k+1];
-        if ($v == '-payload' && file_exists($argv[$k+1])){
-            $args['payload'] = json_decode(file_get_contents($argv[$k+1]));
-        }
-    }
-    return $args;
-}
-
 $args = getArgs();
 
 echo "Hello PHP World!\n";

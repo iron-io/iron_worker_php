@@ -52,6 +52,12 @@ class JSON_Exception extends Exception {
     }
 }
 
+
+class IronWorker_Exception extends Exception{
+
+}
+
+
 /**
  * Class that wraps IronWorker API calls.
  */
@@ -241,6 +247,10 @@ class IronWorker{
      * @return mixed
      */
     public function postCode($filename, $zipFilename, $name){
+
+        // Add IronWorker functions to the uploaded worker
+        self::addHeaderToArchive($zipFilename, $filename);
+
         $this->setPostHeaders();
         $this->headers['Content-Length'] = filesize($zipFilename);
         $ts = time();
@@ -673,4 +683,64 @@ class IronWorker{
         }
         return $data;
     }
+
+
+    /**
+     * Contain php code that adds to worker before upload
+     *
+     * @static
+     * @return string
+     */
+    private static function workerHeader(){
+        $header = <<<'EOL'
+        <?php
+        /*IRON_WORKER_HEADER*/
+        function getArgs(){
+            global $argv;
+            $args = array('task_id' => null, 'dir' => null, 'payload' => array());
+            foreach($argv as $k => $v){
+                if (empty($argv[$k+1])) continue;
+                if ($v == '-id') $args['task_id'] = $argv[$k+1];
+                if ($v == '-d')  $args['dir']     = $argv[$k+1];
+                if ($v == '-payload' && file_exists($argv[$k+1])){
+                    $args['payload'] = json_decode(file_get_contents($argv[$k+1]));
+                }
+            }
+            return $args;
+        }
+
+        function getPayload(){
+           $args = getArgs();
+           return $args['payload'];
+        }
+        ?>
+EOL;
+        return trim($header," \n\r");
+    }
+
+
+    private static function addHeaderToArchive($archive, $worker_file_name){
+        $zip = new ZipArchive;
+        if (!$zip->open($archive) === true) {
+            $zip->close();
+            throw new IronWorker_Exception("Archive $archive not found!");
+        }
+
+        if (! $worker_content = $zip->getFromName($worker_file_name)){
+            $zip->close();
+            throw new IronWorker_Exception("File $worker_file_name in archive $archive not found!");
+        }
+
+        if (strpos($worker_content, '/*IRON_WORKER_HEADER*/') === false){
+            // add header
+            if (!$zip->addFromString($worker_file_name, self::workerHeader().$worker_content)){
+                throw new IronWorker_Exception("Adding Header to the worker failed");
+            }
+        }
+
+        $zip->close();
+        return true;
+    }
+
+
 }
