@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testFFmpeg-php";
+$name = "testFFmpeg-flv-php";
 
 $iw = new IronWorker('config.ini');
 

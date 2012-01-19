@@ -322,18 +322,18 @@ class IronWorker{
         $this->setCommonHeaders();
         $this->headers['Accept'] = "text/plain";
         unset($this->headers['Content-Type']);
-        $url = "projects/{$this->project_id}/tasks/$task_id";
-        return $this->apiCall(self::DELETE, $url);
+        $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
+        return $this->apiCall(self::POST, $url);
     }
 
     public function deleteSchedule($schedule_id){
-        $url = "projects/{$this->project_id}/schedules/$schedule_id";
+        $url = "projects/{$this->project_id}/schedules/$schedule_id/cancel";
 
         $request = array(
             'schedule_id' => $schedule_id
         );
 
-        return $this->apiCall(self::DELETE, $url, $request);
+        return $this->apiCall(self::POST, $url, $request);
     }
 
     /**
