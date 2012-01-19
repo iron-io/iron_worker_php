@@ -296,34 +296,9 @@ class IronWorker{
         return self::json_decode($response);
     }
 
-
-    public function postProject($name){
-        $request = array(
-            'name' => $name
-        );
-
-        $this->setCommonHeaders();
-        $res = $this->apiCall(self::POST, 'projects', $request);
-        $responce = self::json_decode($res);
-        return $responce->id;
-    }
-
-    public function deleteProject(){
-        $url = "projects/{$this->project_id}";
-        return $this->apiCall(self::DELETE, $url);
-    }
-
     public function deleteCode($code_id){
         $url = "projects/{$this->project_id}/codes/$code_id";
         return $this->apiCall(self::DELETE, $url);
-    }
-
-    public function deleteTask($task_id){
-        $this->setCommonHeaders();
-        $this->headers['Accept'] = "text/plain";
-        unset($this->headers['Content-Type']);
-        $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
-        return $this->apiCall(self::POST, $url);
     }
 
     public function deleteSchedule($schedule_id){
@@ -445,6 +420,13 @@ class IronWorker{
         return self::json_decode($this->apiCall(self::GET, $url));
     }
 
+    /**
+     * Cancels task.
+     *
+     * @param string $task_id Task ID
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
     public function cancelTask($task_id){
         if (empty($task_id)){
             throw new InvalidArgumentException("Please set task_id");
@@ -455,6 +437,17 @@ class IronWorker{
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
         return self::json_decode($res);
+    }
+
+    /**
+     * Cancels task.
+     *
+     * @param string $task_id Task ID
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function deleteTask($task_id){
+        return $this->cancelTask($task_id);
     }
 
     public function setTaskProgress($task_id, $percent, $msg = ''){

@@ -23,17 +23,6 @@ echo "\n--Get Project Details---------------------------------\n";
 $project_details = $iw->getProjectDetails();
 tolog('project_details', $project_details);
 
-echo "\n--Posting Project-------------------------------------\n";
-$post_project_id = $iw->postProject('TestNewProject');
-tolog('post_project', $post_project_id, true);
-
-/*
-echo "\n--Deleting Project-------------------------------------\n";
-# TODO: {"msg":"Method not allowed","status_code":405}
-$res = $iw->deleteProject();
-tolog('delete_project', $res, true);
-*/
-
 # =========================== Codes =============================
 
 echo "\n--Posting Code----------------------------------------\n";
@@ -79,14 +68,6 @@ if ($details->status != 'queued'){
 echo "\n--Set Task Progress-----------------------------------\n";
 $res = $iw->setTaskProgress($task_id, 50, 'Job half-done');
 tolog('set_task_progress', $res, true);
-
-/*
-echo "\n--Cancel Task-----------------------------------\n";
-# TODO: returns {"msg":"Not found","status_code":404}
-# or {"msg":"Method POST not allowed","status_code":405}
-$res = $iw->cancelTask($task_id);
-tolog('cancel_task', $res, true);
-*/
 
 echo "\n--Deleting Task---------------------------------------\n";
 $res = $iw->deleteTask($task_id);
