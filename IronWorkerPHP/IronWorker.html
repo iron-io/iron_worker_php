@@ -29,7 +29,7 @@
         		<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">Class that wraps IronWorker API calls.</p>
 		<p class="notes">
-			Located in <a class="field" href="_IronWorker.class.php.html">/IronWorker.class.php</a> (line <span class="field">58</span>)
+			Located in <a class="field" href="_IronWorker.class.php.html">/IronWorker.class.php</a> (line <span class="field">64</span>)
 		</p>
 		
 				
@@ -146,7 +146,7 @@
 										<a href="#createZip" title="details" class="method-name">createZip</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$base_dir</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$files</span> = <span class="var-default">array()</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$destination</span>, [<span class="var-type">bool</span>&nbsp;<span class="var-name">$overwrite</span> = <span class="var-default">false</span>])
 									</div>
-																																																																																																																																																																																<div class="method-definition">
+																																																																																																																																																																<div class="method-definition">
 					<img src="../media/images/StaticMethod.png" alt=" "/>
 											static <span class="method-result">bool</span>
 										<a href="#zipDirectory" title="details" class="method-name">zipDirectory</a>
@@ -160,9 +160,9 @@
 									</div>
 																<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
+											<span class="method-result">mixed</span>
 										<a href="#cancelTask" title="details" class="method-name">cancelTask</a>
-											(<span class="var-type"></span>&nbsp;<span class="var-name">$task_id</span>)
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$task_id</span>)
 									</div>
 																								<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
@@ -173,20 +173,14 @@
 																<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
 											<span class="method-result">void</span>
-										<a href="#deleteProject" title="details" class="method-name">deleteProject</a>
-										()
-									</div>
-																<div class="method-definition">
-					<img src="../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
 										<a href="#deleteSchedule" title="details" class="method-name">deleteSchedule</a>
 											(<span class="var-type"></span>&nbsp;<span class="var-name">$schedule_id</span>)
 									</div>
 																<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
+											<span class="method-result">mixed</span>
 										<a href="#deleteTask" title="details" class="method-name">deleteTask</a>
-											(<span class="var-type"></span>&nbsp;<span class="var-name">$task_id</span>)
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$task_id</span>)
 									</div>
 																<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
@@ -250,12 +244,6 @@
 									</div>
 																<div class="method-definition">
 					<img src="../media/images/Method.png" alt=" "/>
-											<span class="method-result">void</span>
-										<a href="#postProject" title="details" class="method-name">postProject</a>
-											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
-									</div>
-																<div class="method-definition">
-					<img src="../media/images/Method.png" alt=" "/>
 											<span class="method-result">string</span>
 										<a href="#postScheduleAdvanced" title="details" class="method-name">postScheduleAdvanced</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$payload</span> = <span class="var-default">array()</span>], <span class="var-type">int</span>&nbsp;<span class="var-name">$start_at</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$run_every</span> = <span class="var-default">null</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$end_at</span> = <span class="var-default">null</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$run_times</span> = <span class="var-default">null</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">null</span>])
@@ -312,7 +300,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$debug_enabled</span>
-			 = <span class="var-default"> false</span>			(line <span class="line-number">72</span>)
+			 = <span class="var-default"> false</span>			(line <span class="line-number">78</span>)
 		</span>
 	</div>
 
@@ -346,7 +334,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/StaticMethod.png" />
-		<span class="method-title">static createZip</span> (line <span class="line-number">135</span>)
+		<span class="method-title">static createZip</span> (line <span class="line-number">141</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -387,7 +375,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/StaticMethod.png" />
-		<span class="method-title">static zipDirectory</span> (line <span class="line-number">180</span>)
+		<span class="method-title">static zipDirectory</span> (line <span class="line-number">186</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -425,7 +413,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Constructor.png" />
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">102</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">108</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -451,26 +439,28 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">cancelTask</span> (line <span class="line-number">438</span>)
+		<span class="method-title">cancelTask</span> (line <span class="line-number">430</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Cancels task.</p>
 	<ul class="tags">
+				<li><span class="field">throws:</span> InvalidArgumentException</li>
 				<li><span class="field">access:</span> public</li>
 			</ul>
 	
 	<div class="method-signature">
-		<span class="method-result">void</span>
+		<span class="method-result">mixed</span>
 		<span class="method-name">
 			cancelTask
 		</span>
-					(<span class="var-type"></span>&nbsp;<span class="var-name">$task_id</span>)
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$task_id</span>)
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$task_id</span>			</li>
+				<span class="var-type">string</span>
+				<span class="var-name">$task_id</span><span class="var-description">: Task ID</span>			</li>
 				</ul>
 		
 			
@@ -480,7 +470,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">deleteCode</span> (line <span class="line-number">306</span>)
+		<span class="method-title">deleteCode</span> (line <span class="line-number">299</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -504,36 +494,12 @@
 		
 			
 	</div>
-<a name="methoddeleteProject" id="deleteProject"><!-- --></a>
+<a name="methoddeleteSchedule" id="deleteSchedule"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">deleteProject</span> (line <span class="line-number">301</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-	<ul class="tags">
-				<li><span class="field">access:</span> public</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			deleteProject
-		</span>
-				()
-			</div>
-	
-		
-			
-	</div>
-<a name="methoddeleteSchedule" id="deleteSchedule"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../media/images/Method.png" />
-		<span class="method-title">deleteSchedule</span> (line <span class="line-number">319</span>)
+		<span class="method-title">deleteSchedule</span> (line <span class="line-number">304</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -558,40 +524,42 @@
 			
 	</div>
 <a name="methoddeleteTask" id="deleteTask"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">deleteTask</span> (line <span class="line-number">311</span>)
+		<span class="method-title">deleteTask</span> (line <span class="line-number">449</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Cancels task.</p>
 	<ul class="tags">
+				<li><span class="field">throws:</span> InvalidArgumentException</li>
 				<li><span class="field">access:</span> public</li>
 			</ul>
 	
 	<div class="method-signature">
-		<span class="method-result">void</span>
+		<span class="method-result">mixed</span>
 		<span class="method-name">
 			deleteTask
 		</span>
-					(<span class="var-type"></span>&nbsp;<span class="var-name">$task_id</span>)
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$task_id</span>)
 			</div>
 	
 			<ul class="parameters">
 					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$task_id</span>			</li>
+				<span class="var-type">string</span>
+				<span class="var-name">$task_id</span><span class="var-description">: Task ID</span>			</li>
 				</ul>
 		
 			
 	</div>
 <a name="methodgetCodeDetails" id="getCodeDetails"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getCodeDetails</span> (line <span class="line-number">226</span>)
+		<span class="method-title">getCodeDetails</span> (line <span class="line-number">232</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -616,11 +584,11 @@
 			
 	</div>
 <a name="methodgetCodes" id="getCodes"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getCodes</span> (line <span class="line-number">219</span>)
+		<span class="method-title">getCodes</span> (line <span class="line-number">225</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -640,11 +608,11 @@
 			
 	</div>
 <a name="methodgetLog" id="getLog"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getLog</span> (line <span class="line-number">418</span>)
+		<span class="method-title">getLog</span> (line <span class="line-number">403</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -669,11 +637,11 @@
 			
 	</div>
 <a name="methodgetProjectDetails" id="getProjectDetails"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getProjectDetails</span> (line <span class="line-number">213</span>)
+		<span class="method-title">getProjectDetails</span> (line <span class="line-number">219</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -693,11 +661,11 @@
 			
 	</div>
 <a name="methodgetProjects" id="getProjects"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getProjects</span> (line <span class="line-number">200</span>)
+		<span class="method-title">getProjects</span> (line <span class="line-number">206</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -717,11 +685,11 @@
 			
 	</div>
 <a name="methodgetSchedule" id="getSchedule"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getSchedule</span> (line <span class="line-number">348</span>)
+		<span class="method-title">getSchedule</span> (line <span class="line-number">333</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -748,11 +716,11 @@
 			
 	</div>
 <a name="methodgetSchedules" id="getSchedules"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getSchedules</span> (line <span class="line-number">334</span>)
+		<span class="method-title">getSchedules</span> (line <span class="line-number">319</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -773,11 +741,11 @@
 			
 	</div>
 <a name="methodgetTaskDetails" id="getTaskDetails"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getTaskDetails</span> (line <span class="line-number">429</span>)
+		<span class="method-title">getTaskDetails</span> (line <span class="line-number">414</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -802,11 +770,11 @@
 			
 	</div>
 <a name="methodgetTasks" id="getTasks"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">getTasks</span> (line <span class="line-number">206</span>)
+		<span class="method-title">getTasks</span> (line <span class="line-number">212</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -826,11 +794,11 @@
 			
 	</div>
 <a name="methodpostCode" id="postCode"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">postCode</span> (line <span class="line-number">243</span>)
+		<span class="method-title">postCode</span> (line <span class="line-number">249</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -861,41 +829,12 @@
 		
 			
 	</div>
-<a name="methodpostProject" id="postProject"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<img src="../media/images/Method.png" />
-		<span class="method-title">postProject</span> (line <span class="line-number">290</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-	<ul class="tags">
-				<li><span class="field">access:</span> public</li>
-			</ul>
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			postProject
-		</span>
-					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
-			</div>
-	
-			<ul class="parameters">
-					<li>
-				<span class="var-type"></span>
-				<span class="var-name">$name</span>			</li>
-				</ul>
-		
-			
-	</div>
 <a name="methodpostScheduleAdvanced" id="postScheduleAdvanced"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">postScheduleAdvanced</span> (line <span class="line-number">382</span>)
+		<span class="method-title">postScheduleAdvanced</span> (line <span class="line-number">367</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -944,7 +883,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">postScheduleSimple</span> (line <span class="line-number">366</span>)
+		<span class="method-title">postScheduleSimple</span> (line <span class="line-number">351</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -981,7 +920,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">postTask</span> (line <span class="line-number">399</span>)
+		<span class="method-title">postTask</span> (line <span class="line-number">384</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1015,7 +954,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">setProjectId</span> (line <span class="line-number">191</span>)
+		<span class="method-title">setProjectId</span> (line <span class="line-number">197</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1044,7 +983,7 @@
 	
 	<div class="method-header">
 		<img src="../media/images/Method.png" />
-		<span class="method-title">setTaskProgress</span> (line <span class="line-number">450</span>)
+		<span class="method-title">setTaskProgress</span> (line <span class="line-number">453</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1100,7 +1039,7 @@
 		<span class="const-title">
 			<span class="const-name">DELETE</span>
 			 = <span class="const-default"> 'DELETE'</span>
-			(line <span class="line-number">70</span>)
+			(line <span class="line-number">76</span>)
 		</span>
 	</div>
 
@@ -1116,7 +1055,7 @@
 		<span class="const-title">
 			<span class="const-name">GET</span>
 			 = <span class="const-default"> 'GET'</span>
-			(line <span class="line-number">69</span>)
+			(line <span class="line-number">75</span>)
 		</span>
 	</div>
 
@@ -1132,7 +1071,7 @@
 		<span class="const-title">
 			<span class="const-name">header_accept</span>
 			 = <span class="const-default"> &quot;application/json&quot;</span>
-			(line <span class="line-number">62</span>)
+			(line <span class="line-number">68</span>)
 		</span>
 	</div>
 
@@ -1148,7 +1087,7 @@
 		<span class="const-title">
 			<span class="const-name">header_accept_encoding</span>
 			 = <span class="const-default"> &quot;gzip, deflate&quot;</span>
-			(line <span class="line-number">63</span>)
+			(line <span class="line-number">69</span>)
 		</span>
 	</div>
 
@@ -1164,7 +1103,7 @@
 		<span class="const-title">
 			<span class="const-name">header_user_agent</span>
 			 = <span class="const-default"> &quot;IronWorker PHP v0.1&quot;</span>
-			(line <span class="line-number">61</span>)
+			(line <span class="line-number">67</span>)
 		</span>
 	</div>
 
@@ -1180,7 +1119,7 @@
 		<span class="const-title">
 			<span class="const-name">HTTP_ACEPTED</span>
 			 = <span class="const-default"> 202</span>
-			(line <span class="line-number">66</span>)
+			(line <span class="line-number">72</span>)
 		</span>
 	</div>
 
@@ -1196,7 +1135,7 @@
 		<span class="const-title">
 			<span class="const-name">HTTP_CREATED</span>
 			 = <span class="const-default"> 201</span>
-			(line <span class="line-number">65</span>)
+			(line <span class="line-number">71</span>)
 		</span>
 	</div>
 
@@ -1212,7 +1151,7 @@
 		<span class="const-title">
 			<span class="const-name">HTTP_OK</span>
 			 = <span class="const-default"> 200</span>
-			(line <span class="line-number">64</span>)
+			(line <span class="line-number">70</span>)
 		</span>
 	</div>
 
@@ -1228,7 +1167,7 @@
 		<span class="const-title">
 			<span class="const-name">POST</span>
 			 = <span class="const-default"> 'POST'</span>
-			(line <span class="line-number">68</span>)
+			(line <span class="line-number">74</span>)
 		</span>
 	</div>
 
@@ -1241,7 +1180,7 @@
 	</div>
 	
 	<p class="notes" id="credit">
-		Documentation generated on Wed, 11 Jan 2012 07:42:42 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Thu, 19 Jan 2012 09:45:39 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>
