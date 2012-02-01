@@ -378,10 +378,14 @@ class IronWorker{
      * Queues already uploaded worker
      *
      * @param string $name Package name
-     * @param array $payload
+     * @param array $payload Payload for task
+     * @param array $options Optional parameters:
+     *  - "priority" priority queue to run the job in (0, 1, 2). 0 is default.
+     *  - "timeout" maximum runtime of your task in seconds. Maximum time is 3600 seconds (60 minutes). Default is 3600 seconds (60 minutes).
+     *  - "delay" delay before actually queueing the task in seconds. Default is 0 seconds.
      * @return string Created Task ID
      */
-    public function postTask($name, $payload = array()){
+    public function postTask($name, $payload = array(), $options = array()){
         $url = "projects/{$this->project_id}/tasks";
 
         $request = array(
@@ -393,6 +397,10 @@ class IronWorker{
                 )
             )
         );
+
+        foreach ($options as $k => $v){
+            $request['tasks'][0][$k] = $v;
+        }
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
