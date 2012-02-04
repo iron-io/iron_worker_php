@@ -153,6 +153,15 @@ print_r($args);
 
 ```
 
+## Setting progress status
+
+To set current task progress, just call `setProgress($percent, $message)` inside your worker.
+
+* percent - A percentage value that can be set to show how much progress a task is making
+* msg - A human readable message string that can be used when showing the status of a task
+
+To retrieve this data on client side, use `$iw->getTaskDetails($task_id);`
+
 # Full Documentation
 
 You can find more documentation here:
