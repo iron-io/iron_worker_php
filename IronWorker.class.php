@@ -90,6 +90,7 @@ class IronWorker{
     private $api_version;
     private $version;
     private $project_id;
+    private $headers;
 
     /**
      * @param string|array $config_file_or_options
@@ -249,7 +250,7 @@ class IronWorker{
     public function postCode($filename, $zipFilename, $name){
 
         // Add IronWorker functions to the uploaded worker
-        self::addHeaderToArchive($zipFilename, $filename);
+        $this->addHeaderToArchive($zipFilename, $filename);
 
         $this->setPostHeaders();
         $this->headers['Content-Length'] = filesize($zipFilename);
@@ -689,10 +690,9 @@ class IronWorker{
     /**
      * Contain php code that adds to worker before upload
      *
-     * @static
      * @return string
      */
-    private static function workerHeader(){
+    private function workerHeader(){
         $header = <<<'EOL'
         <?php
         /*IRON_WORKER_HEADER*/
@@ -711,16 +711,45 @@ class IronWorker{
         }
 
         function getPayload(){
-           $args = getArgs();
-           return $args['payload'];
+            $args = getArgs();
+            return $args['payload'];
         }
+
+        function setProgress($percent, $msg = ''){
+            $args = getArgs();
+            $task_id = $args['task_id'];
+            $base_url   = '[URL]';
+            $project_id = '[PROJECT_ID]';
+            $headers    =  [HEADERS];
+
+            $url = "{$base_url}projects/$project_id/tasks/$task_id/progress";
+            $params = array(
+                'percent' => $percent,
+                'msg'     => $msg
+            );
+
+            $s = curl_init();
+            curl_setopt($s, CURLOPT_URL,  $url);
+            curl_setopt($s, CURLOPT_POST, true);
+            curl_setopt($s, CURLOPT_POSTFIELDS, json_encode($params));
+            curl_setopt($s, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($s, CURLOPT_HTTPHEADER, $headers);
+            $out = curl_exec($s);
+            curl_close($s);
+            return json_decode($out);
+        }
+
         ?>
 EOL;
+        $header = str_replace(
+            array('[PROJECT_ID]','[URL]','[HEADERS]'),
+            array($this->project_id, $this->url, var_export($this->compiledHeaders(), true)),
+            $header
+        );
         return trim($header," \n\r");
     }
 
-
-    private static function addHeaderToArchive($archive, $worker_file_name){
+    private function addHeaderToArchive($archive, $worker_file_name){
         $zip = new ZipArchive;
         if (!$zip->open($archive) === true) {
             $zip->close();
@@ -734,7 +763,7 @@ EOL;
 
         if (strpos($worker_content, '/*IRON_WORKER_HEADER*/') === false){
             // add header
-            if (!$zip->addFromString($worker_file_name, self::workerHeader().$worker_content)){
+            if (!$zip->addFromString($worker_file_name, $this->workerHeader().$worker_content)){
                 throw new IronWorker_Exception("Adding Header to the worker failed");
             }
         }
@@ -742,6 +771,5 @@ EOL;
         $zip->close();
         return true;
     }
-
 
 }
