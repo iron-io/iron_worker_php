@@ -1,7 +1,7 @@
 <?php
 include("../IronWorker.class.php");
 
-$config = parse_ini_file('config.ini', true);
+$config = parse_ini_file('../config.ini', true);
 
 $name = "testGD_S3.php";
 

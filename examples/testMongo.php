@@ -1,24 +1,20 @@
 <?php
 include("../IronWorker.class.php");
 
-$name = "testPDO.php";
+$name = "testMongo-php";
 
 $config = parse_ini_file('../config.ini', true);
 
-# Passing array of options instead of config file.
 $iw = new IronWorker($config['iron_worker']);
-$iw->debug_enabled = true;
 
 $zipName = "code/$name.zip";
-
-$zipFile = IronWorker::zipDirectory(dirname(__FILE__)."/workers/PDO", $zipName, true);
-
-$res = $iw->postCode('Pdo.php', $zipName, $name);
-print_r($res);
+$files_to_zip = array('mongo.php');
+$zipFile = IronWorker::createZip(dirname(__FILE__)."/workers/mongo", $files_to_zip, $zipName, true);
+if (!$zipFile) die("Zip file $zipName was not created!");
+$res = $iw->postCode('mongo.php', $zipName, $name);
 
 $payload = array(
-    'connection'  => $config['pdo'],
-    'yet_another' => array('value', 'value #2')
+    'db' => $config['mongo']
 );
 
 $task_id = $iw->postTask($name, $payload);
@@ -26,9 +22,11 @@ echo "task_id = $task_id \n";
 sleep(10);
 $details = $iw->getTaskDetails($task_id);
 print_r($details);
-
+# Check log only if task finished.
 if ($details->status != 'queued'){
     $log = $iw->getLog($task_id);
     print_r($log);
 }
+
+
 
