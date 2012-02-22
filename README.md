@@ -66,6 +66,10 @@ $res = $iw->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
 ```
 Where 'HelloWorld' is a worker name which should be used later for queueing and sheduling.
 
+## Worker examples
+
+You can find plenty of good worker examples here: [iron_worker_examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
+
 ## Queueing a Worker
 
 ```php
@@ -169,3 +173,4 @@ You can find more documentation here:
 * http://docs.iron.io Full documetation for iron.io products.
 * [IronWorker PHP reference](http://iron-io.github.com/iron_worker_php/).
 * [IronWorker PHP Wiki pages](https://github.com/iron-io/iron_worker_php/wiki).
+* [IronWorker PHP Examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
