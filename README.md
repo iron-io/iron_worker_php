@@ -170,7 +170,7 @@ To retrieve this data on client side, use `$iw->getTaskDetails($task_id);`
 
 You can find more documentation here:
 
-* http://docs.iron.io Full documetation for iron.io products.
+* http://dev.iron.io Full documetation for iron.io products.
 * [IronWorker PHP reference](http://iron-io.github.com/iron_worker_php/).
 * [IronWorker PHP Wiki pages](https://github.com/iron-io/iron_worker_php/wiki).
 * [IronWorker PHP Examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
