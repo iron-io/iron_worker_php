@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.0
+ * @version 1.0.1
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -22,6 +22,7 @@ class Http_Exception extends Exception{
     const CONFLICT = 409;
     const PRECONDITION_FAILED = 412;
     const INTERNAL_ERROR = 500;
+    const SERVICE_UNAVAILABLE = 503;
 }
 
 /**
@@ -75,6 +76,7 @@ class IronWorker{
     const GET    = 'GET';
     const DELETE = 'DELETE';
 
+    public  $max_retries = 5;
     public  $debug_enabled = false;
 
     private $required_config_fields = array('token','project_id');
@@ -552,19 +554,29 @@ class IronWorker{
 
         curl_setopt($s, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($s, CURLOPT_HTTPHEADER, $this->compiledHeaders());
-        $_out = curl_exec($s);
-        $status = curl_getinfo($s, CURLINFO_HTTP_CODE);
-        curl_close($s);
-        switch ($status) {
-            case self::HTTP_OK:
-            case self::HTTP_CREATED:
-            case self::HTTP_ACEPTED:
-                $out = $_out;
-                break;
-            default:
-                throw new Http_Exception("http error: {$status} | {$_out}", $status);
+        return $this->callWithRetries($s);
+    }
+
+    private function callWithRetries($s){
+        for ($retry = 0; $retry < $this->max_retries; $retry++){
+            $_out = curl_exec($s);
+            $status = curl_getinfo($s, CURLINFO_HTTP_CODE);
+            switch ($status) {
+                case self::HTTP_OK:
+                case self::HTTP_CREATED:
+                case self::HTTP_ACEPTED:
+                    curl_close($s);
+                    return $_out;
+                case Http_Exception::SERVICE_UNAVAILABLE:
+                    // wait for a random delay between 0 and (4^currentRetry * 100) milliseconds
+                    $max_delay = pow(4, $retry)*100*1000;
+                    usleep(rand(0, $max_delay));
+                    break;
+                default:
+                    throw new Http_Exception("http error: {$status} | {$_out}", $status);
+            }
         }
-        return $out;
+        throw new Http_Exception("http error: Service unavailable | ", 503);
     }
 
 
