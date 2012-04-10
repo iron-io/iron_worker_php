@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.0.1
+ * @version 1.1.0
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -252,22 +252,22 @@ class IronWorker{
     public function postCode($filename, $zipFilename, $name){
 
         // Add IronWorker functions to the uploaded worker
-        $this->addHeaderToArchive($zipFilename, $filename);
+        $this->addRunnerToArchive($zipFilename, $filename);
 
         $this->setPostHeaders();
         $ts = time();
         $runtime_type = $this->runtimeFileType($filename);
         $sendingData = array(
-            "code_name" => $name,
-            "name" => $name,
+            "code_name"  => $name,
+            "name"       => $name,
             "standalone" => True,
-            "runtime" => $runtime_type,
-            "file_name" => $filename,
-            "version" => $this->version,
-            "timestamp" => $ts,
-            "oauth" => $this->token,
+            "runtime"    => $runtime_type,
+            "file_name"  => "runner.php",
+            "version"    => $this->version,
+            "timestamp"  => $ts,
+            "oauth"      => $this->token,
             "class_name" => $name,
-            "options" => array(),
+            "options"    => array(),
             "access_key" => $name
         );
         $url = "projects/{$this->project_id}/codes";
@@ -686,9 +686,10 @@ class IronWorker{
     /**
      * Contain php code that adds to worker before upload
      *
+     * @param string $worker_file_name
      * @return string
      */
-    private function workerHeader(){
+    private function workerHeader($worker_file_name){
         $header = <<<'EOL'
         <?php
         /*IRON_WORKER_HEADER*/
@@ -734,34 +735,30 @@ class IronWorker{
             curl_close($s);
             return json_decode($out);
         }
-
-        ?>
+        require dirname(__FILE__)."/[SCRIPT]";
 EOL;
         $header = str_replace(
-            array('[PROJECT_ID]','[URL]','[HEADERS]'),
-            array($this->project_id, $this->url, var_export($this->compiledHeaders(), true)),
+            array('[PROJECT_ID]','[URL]','[HEADERS]','[SCRIPT]'),
+            array($this->project_id, $this->url, var_export($this->compiledHeaders(), true), $worker_file_name),
             $header
         );
         return trim($header," \n\r");
     }
 
-    private function addHeaderToArchive($archive, $worker_file_name){
+    private function addRunnerToArchive($archive, $worker_file_name){
         $zip = new ZipArchive;
         if (!$zip->open($archive) === true) {
             $zip->close();
-            throw new IronWorker_Exception("Archive $archive not found!");
+            throw new IronWorker_Exception("Archive $archive was not found!");
         }
 
-        if (! $worker_content = $zip->getFromName($worker_file_name)){
+        if ($zip->statName($worker_file_name) === false){
             $zip->close();
-            throw new IronWorker_Exception("File $worker_file_name in archive $archive not found!");
+            throw new IronWorker_Exception("File $worker_file_name in archive $archive was not found!");
         }
 
-        if (strpos($worker_content, '/*IRON_WORKER_HEADER*/') === false){
-            // add header
-            if (!$zip->addFromString($worker_file_name, $this->workerHeader().$worker_content)){
-                throw new IronWorker_Exception("Adding Header to the worker failed");
-            }
+        if (!$zip->addFromString('runner.php', $this->workerHeader($worker_file_name))){
+            throw new IronWorker_Exception("Adding Runner to the worker failed");
         }
 
         $zip->close();
