@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.1.0
+ * @version 1.1.1
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -70,7 +70,7 @@ class IronWorker{
     const header_accept_encoding = "gzip, deflate";
     const HTTP_OK = 200;
     const HTTP_CREATED = 201;
-    const HTTP_ACEPTED = 202;
+    const HTTP_ACCEPTED = 202;
 
     const POST   = 'POST';
     const GET    = 'GET';
@@ -564,19 +564,43 @@ class IronWorker{
             switch ($status) {
                 case self::HTTP_OK:
                 case self::HTTP_CREATED:
-                case self::HTTP_ACEPTED:
+                case self::HTTP_ACCEPTED:
                     curl_close($s);
                     return $_out;
+                case Http_Exception::INTERNAL_ERROR:
+                    if (strpos($_out, "EOF") !== false){
+                        self::waitRandomInterval($retry);
+                    }else{
+                        curl_close($s);
+                        $this->reportHttpError($status, $_out);
+                    }
+                    break;
                 case Http_Exception::SERVICE_UNAVAILABLE:
-                    // wait for a random delay between 0 and (4^currentRetry * 100) milliseconds
-                    $max_delay = pow(4, $retry)*100*1000;
-                    usleep(rand(0, $max_delay));
+                    self::waitRandomInterval($retry);
                     break;
                 default:
-                    throw new Http_Exception("http error: {$status} | {$_out}", $status);
+                    curl_close($s);
+                    $this->reportHttpError($status, $_out);
             }
         }
-        throw new Http_Exception("http error: Service unavailable | ", 503);
+        curl_close($s);
+        return $this->reportHttpError(503, "Service unavailable");
+    }
+
+    private function reportHttpError($status, $text){
+        throw new Http_Exception("http error: {$status} | {$text}", $status);
+    }
+
+
+    /**
+     * Wait for a random delay between 0 and (4^currentRetry * 100) milliseconds
+     *
+     * @static
+     * @param int $retry currentRetry
+     */
+    private static function waitRandomInterval($retry){
+        $max_delay = pow(4, $retry)*100*1000;
+        usleep(rand(0, $max_delay));
     }
 
 
