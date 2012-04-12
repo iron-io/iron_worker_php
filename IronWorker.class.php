@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.1.1
+ * @version 1.1.2
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -18,7 +18,7 @@ class Http_Exception extends Exception{
     const NOT_MODIFIED = 304;
     const BAD_REQUEST = 400;
     const NOT_FOUND = 404;
-    const NOT_ALOWED = 405;
+    const NOT_ALLOWED = 405;
     const CONFLICT = 409;
     const PRECONDITION_FAILED = 412;
     const INTERNAL_ERROR = 500;
