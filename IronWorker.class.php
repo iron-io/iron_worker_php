@@ -771,7 +771,7 @@ EOL;
 
     private function addRunnerToArchive($archive, $worker_file_name){
         $zip = new ZipArchive;
-        if (!$zip->open($archive, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === true) {
+        if (!$zip->open($archive, ZIPARCHIVE::CREATE) === true) {
             $zip->close();
             throw new IronWorker_Exception("Archive $archive was not found!");
         }
