@@ -714,50 +714,50 @@ class IronWorker{
      * @return string
      */
     private function workerHeader($worker_file_name){
-        $header = <<<'EOL'
+        $header = <<<EOL
         <?php
         /*IRON_WORKER_HEADER*/
         function getArgs(){
-            global $argv;
-            $args = array('task_id' => null, 'dir' => null, 'payload' => array());
-            foreach($argv as $k => $v){
-                if (empty($argv[$k+1])) continue;
-                if ($v == '-id') $args['task_id'] = $argv[$k+1];
-                if ($v == '-d')  $args['dir']     = $argv[$k+1];
-                if ($v == '-payload' && file_exists($argv[$k+1])){
-                    $args['payload'] = json_decode(file_get_contents($argv[$k+1]));
+            global \$argv;
+            \$args = array('task_id' => null, 'dir' => null, 'payload' => array());
+            foreach(\$argv as \$k => \$v){
+                if (empty(\$argv[\$k+1])) continue;
+                if (\$v == '-id') \$args['task_id'] = \$argv[$k+1];
+                if (\$v == '-d')  \$args['dir']     = \$argv[$k+1];
+                if (\$v == '-payload' && file_exists(\$argv[\$k+1])){
+                    \$args['payload'] = json_decode(file_get_contents(\$argv[\$k+1]));
                 }
             }
-            return $args;
+            return \$args;
         }
 
         function getPayload(){
-            $args = getArgs();
-            return $args['payload'];
+            \$args = getArgs();
+            return \$args['payload'];
         }
 
-        function setProgress($percent, $msg = ''){
-            $args = getArgs();
-            $task_id = $args['task_id'];
-            $base_url   = '[URL]';
-            $project_id = '[PROJECT_ID]';
-            $headers    =  [HEADERS];
+        function setProgress(\$percent, \$msg = ''){
+            \$args = getArgs();
+            \$task_id = \$args['task_id'];
+            \$base_url   = '[URL]';
+            \$project_id = '[PROJECT_ID]';
+            \$headers    =  [HEADERS];
 
-            $url = "{$base_url}projects/$project_id/tasks/$task_id/progress";
-            $params = array(
-                'percent' => $percent,
-                'msg'     => $msg
+            \$url = "{\$base_url}projects/\$project_id/tasks/\$task_id/progress";
+            \$params = array(
+                'percent' => \$percent,
+                'msg'     => \$msg
             );
 
-            $s = curl_init();
-            curl_setopt($s, CURLOPT_URL,  $url);
-            curl_setopt($s, CURLOPT_POST, true);
-            curl_setopt($s, CURLOPT_POSTFIELDS, json_encode($params));
-            curl_setopt($s, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($s, CURLOPT_HTTPHEADER, $headers);
-            $out = curl_exec($s);
-            curl_close($s);
-            return json_decode($out);
+            \$s = curl_init();
+            curl_setopt(\$s, CURLOPT_URL,  \$url);
+            curl_setopt(\$s, CURLOPT_POST, true);
+            curl_setopt(\$s, CURLOPT_POSTFIELDS, json_encode(\$params));
+            curl_setopt(\$s, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt(\$s, CURLOPT_HTTPHEADER, \$headers);
+            \$out = curl_exec(\$s);
+            curl_close(\$s);
+            return json_decode(\$out);
         }
         require dirname(__FILE__)."/[SCRIPT]";
 EOL;
@@ -771,7 +771,7 @@ EOL;
 
     private function addRunnerToArchive($archive, $worker_file_name){
         $zip = new ZipArchive;
-        if (!$zip->open($archive) === true) {
+        if (!$zip->open($archive, ZIPARCHIVE::CREATE) === true) {
             $zip->close();
             throw new IronWorker_Exception("Archive $archive was not found!");
         }
