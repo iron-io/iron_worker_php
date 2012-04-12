@@ -44,6 +44,10 @@ class JSON_Exception extends Exception {
             case JSON_ERROR_SYNTAX:
                 $this->error = "Syntax error, malformed JSON";
                 break;
+            default:
+                $this->error = $error_code;
+                break;
+
         }
         parent::__construct();
     }
@@ -699,9 +703,13 @@ class IronWorker{
 
     private static function json_decode($response){
         $data = json_decode($response);
-        $json_error = json_last_error();
-        if($json_error != JSON_ERROR_NONE) {
-            throw new JSON_Exception($json_error);
+        if (function_exists('json_last_error')){
+            $json_error = json_last_error();
+            if($json_error != JSON_ERROR_NONE) {
+                throw new JSON_Exception($json_error);
+            }
+        }elseif($data === null){
+            throw new JSON_Exception("Common JSON error");
         }
         return $data;
     }
@@ -722,8 +730,8 @@ class IronWorker{
             \$args = array('task_id' => null, 'dir' => null, 'payload' => array());
             foreach(\$argv as \$k => \$v){
                 if (empty(\$argv[\$k+1])) continue;
-                if (\$v == '-id') \$args['task_id'] = \$argv[$k+1];
-                if (\$v == '-d')  \$args['dir']     = \$argv[$k+1];
+                if (\$v == '-id') \$args['task_id'] = \$argv[\$k+1];
+                if (\$v == '-d')  \$args['dir']     = \$argv[\$k+1];
                 if (\$v == '-payload' && file_exists(\$argv[\$k+1])){
                     \$args['payload'] = json_decode(file_get_contents(\$argv[\$k+1]));
                 }
