@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.1.2
+ * @version 1.1.3
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -127,6 +127,33 @@ class IronWorker{
         $this->api_version  = $api_version;
         $this->version      = $api_version;
         $this->project_id   = $project_id;
+    }
+
+    /**
+     * Zips and uploads your code
+     *
+     * Shortcut for zipDirectory() + postCode()
+     *
+     * @param string $directory Directory with worker files
+     * @param string $run_filename This file will be launched as worker
+     * @param string $code_name Referenceable (unique) name for your worker
+     * @return bool Result of operation
+     * @throws Exception
+     */
+    public function upload($directory, $run_filename, $code_name){
+        $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
+        if (!self::zipDirectory($directory, $temp_file, true)){
+            unlink($temp_file);
+            return false;
+        }
+        try{
+            $response = $this->postCode($run_filename, $temp_file, $code_name);
+            $is_ok = ($response->status_code == 200);
+        }catch(Exception $e){
+            unlink($temp_file);
+            throw $e;
+        }
+        return $is_ok;
     }
 
     /**

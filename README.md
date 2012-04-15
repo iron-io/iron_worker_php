@@ -48,6 +48,18 @@ echo "Hello PHP World!\n";
 ```
 ## Upload code to server
 
+You can upload worker in one step:
+
+```php
+<?php
+# 1. Directory where worker files lies
+# 2. This file will be launched as worker
+# 3. Referenceable (unique) name for your worker
+$iw->upload(dirname(__FILE__)."/hello_world/", 'HelloWorld.php', 'HelloWorld');
+
+```
+OR zip and upload separately:
+
 * Zip worker:
 
 ```php
@@ -64,7 +76,7 @@ IronWorker::zipDirectory(dirname(__FILE__)."/hello_world/", 'worker.zip', true);
 <?php
 $res = $iw->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
 ```
-Where 'HelloWorld' is a worker name which should be used later for queueing and sheduling.
+Where 'HelloWorld' is a worker name which should be used later for queueing and scheduling.
 
 ## Worker examples
 
