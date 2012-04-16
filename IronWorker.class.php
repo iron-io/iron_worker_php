@@ -369,13 +369,13 @@ class IronWorker{
     /**
      * Schedules task
      *
-     * @param string $name Package name
-     * @param array $payload Payload for task
-     * @param int $start_at Time of first run in unix timestamp format. Example: time()+2*60
-     * @param int $run_every Time in seconds between runs. If omitted, task will only run once.
-     * @param int $end_at Time tasks will stop being enqueued in unix timestamp format.
-     * @param int $run_times Number of times to run task.
-     * @param int $priority Priority queue to run the job in (0, 1, 2). p0 is default.
+     * @param string        $name       Package name
+     * @param array         $payload    Payload for task
+     * @param int|DateTime  $start_at   Time of first run in unix timestamp format or as DateTime instance. Example: time()+2*60
+     * @param int           $run_every  Time in seconds between runs. If omitted, task will only run once.
+     * @param int|DateTime  $end_at     Time tasks will stop being enqueued in unix timestamp or as DateTime instance format.
+     * @param int           $run_times  Number of times to run task.
+     * @param int           $priority   Priority queue to run the job in (0, 1, 2). p0 is default.
      * @return string Created Schedule id
      */
     public function postScheduleAdvanced($name, $payload = array(), $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null){
@@ -714,16 +714,23 @@ class IronWorker{
 
     private static function dateRfc3339($timestamp = 0) {
 
-        if (!$timestamp) {
-            $timestamp = time();
-        }
-        $date = date('Y-m-d\TH:i:s', $timestamp);
-
-        $matches = array();
-        if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
-            $date .= $matches[1].$matches[2].':'.$matches[3];
+        if ($timestamp instanceof DateTime) {
+            /**
+             * @var $timestamp DateTime
+             */
+            $date = $timestamp->format('c');
         } else {
-            $date .= 'Z';
+            if (!$timestamp) {
+                $timestamp = time();
+            }
+            $date = date('Y-m-d\TH:i:s', $timestamp);
+
+            $matches = array();
+            if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
+                $date .= $matches[1] . $matches[2] . ':' . $matches[3];
+            } else {
+                $date .= 'Z';
+            }
         }
         return $date;
     }
