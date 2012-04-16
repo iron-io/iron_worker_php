@@ -713,26 +713,13 @@ class IronWorker{
     }
 
     private static function dateRfc3339($timestamp = 0) {
-
         if ($timestamp instanceof DateTime) {
-            /**
-             * @var $timestamp DateTime
-             */
-            $date = $timestamp->format('c');
-        } else {
-            if (!$timestamp) {
-                $timestamp = time();
-            }
-            $date = date('Y-m-d\TH:i:s', $timestamp);
-
-            $matches = array();
-            if (preg_match('/^([\-+])(\d{2})(\d{2})$/', date('O', $timestamp), $matches)) {
-                $date .= $matches[1] . $matches[2] . ':' . $matches[3];
-            } else {
-                $date .= 'Z';
-            }
+            $timestamp = $timestamp->getTimestamp();
         }
-        return $date;
+        if (!$timestamp) {
+            $timestamp = time();
+        }
+        return gmdate('c', $timestamp);
     }
 
     private static function json_decode($response){
