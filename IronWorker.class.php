@@ -485,6 +485,30 @@ class IronWorker{
         $this->setCommonHeaders();
         return self::json_decode($this->apiCall(self::POST, $url, $request));
     }
+    /**
+     * Wait while the task specified by task_id executes
+     *
+     * @param string $task_id Task ID
+     * @param int $sleep Delay between API invocations in seconds
+     * @param int $max_wait_time Maximum waiting time in seconds, 0 for infinity
+     * @return mixed $details Task details or false
+     */
+    public function waitFor($task_id, $sleep = 5, $max_wait_time = 0){
+        while(1){
+            $details = $this->getTaskDetails($task_id);
+
+            if ($details->status != 'queued' && $details->status != 'running'){
+                return $details;
+            }
+            if ($max_wait_time > 0){
+                $max_wait_time -= $sleep;
+                if ($max_wait_time <= 0) return false;
+            }
+
+            sleep($sleep);
+        }
+        return false;
+    }
 
     /* PRIVATE FUNCTIONS */
 
