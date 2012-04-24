@@ -99,7 +99,7 @@ class IronWorker{
     private $headers;
 
     /**
-     * @param string|array $config_file_or_options
+     * @param string|array|null $config_file_or_options
      *        Array of options or name of config file.
      * Fields in options array or in config:
      *
@@ -111,22 +111,20 @@ class IronWorker{
      * - host
      * - port
      * - api_version
+     *
+     * Configuration data will be searched in this locations:
+     * 1.  passed to class constructor
+     * 2a. config file iron.ini in current directory
+     * 2b. config file iron.json in current directory
+     * 3a. environment variables IRON_WORKER_TOKEN and others
+     * 3b. environment variables IRON_TOKEN and others
+     * 4a. config file ~/.iron.ini in user home dir
+     * 4b. config file ~/.iron.json in user home dir
+     *
      */
-    function __construct($config_file_or_options){
-        $config = $this->getConfigData($config_file_or_options);
-        $token              = $config['token'];
-        $project_id         = $config['project_id'];
-
-        $protocol           = empty($config['protocol'])   ? $this->default_values['protocol']    : $config['protocol'];
-        $host               = empty($config['host'])       ? $this->default_values['host']        : $config['host'];
-        $port               = empty($config['port'])       ? $this->default_values['port']        : $config['port'];
-        $api_version        = empty($config['api_version'])? $this->default_values['api_version'] : $config['api_version'];
-
-        $this->url          = "$protocol://$host:$port/$api_version/";
-        $this->token        = $token;
-        $this->api_version  = $api_version;
-        $this->version      = $api_version;
-        $this->project_id   = $project_id;
+    function __construct($config_file_or_options = null){
+        $this->getConfigData($config_file_or_options);
+        $this->url = "{$this->protocol}://{$this->host}:{$this->port}/{$this->api_version}/";
     }
 
     /**
@@ -660,32 +658,80 @@ class IronWorker{
 
 
     /**
-     * @param array|string $config_file_or_options
+     * @param array|string|null $config_file_or_options
      * array of options or name of config file
      * @return array
      * @throws InvalidArgumentException
      */
     private function getConfigData($config_file_or_options){
-        if (is_string($config_file_or_options)){
-            $ini = parse_ini_file($config_file_or_options, true);
-            if ($ini === false){
+        if(is_string($config_file_or_options)){
+            if (!file_exists($config_file_or_options)){
                 throw new InvalidArgumentException("Config file $config_file_or_options not found");
             }
-            if (empty($ini['iron_worker'])){
-                throw new InvalidArgumentException("Config file $config_file_or_options has no section 'iron_worker'");
-            }
-            $config =  $ini['iron_worker'];
+            $this->loadConfigFile($config_file_or_options);
         }elseif(is_array($config_file_or_options)){
-            $config = $config_file_or_options;
+            $this->loadFromHash($config_file_or_options);
+        }
+
+        $this->loadConfigFile('iron.ini');
+        $this->loadConfigFile('iron.json');
+
+        $this->loadFromEnv('IRON_WORKER');
+        $this->loadFromEnv('IRON');
+
+        $this->loadConfigFile(self::homeDir() . '.iron.ini');
+        $this->loadConfigFile(self::homeDir() . '.iron.json');
+
+        $this->loadFromHash($this->default_values);
+
+        if (empty($this->token) || empty($this->project_id)){
+            throw new InvalidArgumentException("token or project_id not found in any of the available sources");
+        }
+    }
+
+
+    private function loadFromHash($options){
+        if (empty($options)) return;
+        $this->token       = $this->token       ?: $options['token'];
+        $this->project_id  = $this->project_id  ?: $options['project_id'];
+        $this->protocol    = $this->protocol    ?: $options['protocol'];
+        $this->host        = $this->host        ?: $options['host'];
+        $this->port        = $this->port        ?: $options['port'];
+        $this->api_version = $this->api_version ?: $options['api_version'];
+    }
+
+    private function loadFromEnv($prefix){
+        $this->token       = $this->token       ?: getenv($prefix. "_TOKEN");
+        $this->project_id  = $this->project_id  ?: getenv($prefix. "_PROJECT_ID");
+        $this->protocol    = $this->protocol    ?: getenv($prefix. "_SCHEME");
+        $this->host        = $this->host        ?: getenv($prefix. "_HOST");
+        $this->port        = $this->port        ?: getenv($prefix. "_PORT");
+        $this->api_version = $this->api_version ?: getenv($prefix. "_API_VERSION");
+    }
+
+    private function loadConfigFile($file){
+        if (!file_exists($file)) return;
+        $data = @parse_ini_file($file, true);
+        if ($data === false){
+            $data = json_decode(file_get_contents($file), true);
+        }
+        if (!is_array($data)){
+            throw new InvalidArgumentException("Config file $file not parsed");
+        };
+
+        $this->loadFromHash($data['iron_worker']);
+        $this->loadFromHash($data['iron']);
+        $this->loadFromHash($data);
+    }
+
+    private static function homeDir(){
+        if ($home_dir = getenv('HOME')){
+            // *NIX
+            return $home_dir.DIRECTORY_SEPARATOR;
         }else{
-            throw new InvalidArgumentException("Wrong parameter type");
+            // Windows
+            return getenv('HOMEDRIVE').getenv('HOMEPATH').DIRECTORY_SEPARATOR;
         }
-        foreach ($this->required_config_fields as $field){
-            if (empty($config[$field])){
-                throw new InvalidArgumentException("Required config key missing: '$field'");
-            }
-        }
-        return $config;
     }
 
     private function getFileContent($filename){
