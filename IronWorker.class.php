@@ -83,11 +83,10 @@ class IronWorker{
     public  $max_retries = 5;
     public  $debug_enabled = false;
 
-    private $required_config_fields = array('token','project_id');
     private $default_values = array(
-        'protocol'    => 'http',
+        'protocol'    => 'https',
         'host'        => 'worker-aws-us-east-1.iron.io',
-        'port'        => '80',
+        'port'        => '443',
         'api_version' => '2',
     );
 
@@ -97,6 +96,8 @@ class IronWorker{
     private $version;
     private $project_id;
     private $headers;
+    private $protocol;
+    private $host;
 
     /**
      * @param string|array|null $config_file_or_options
@@ -692,21 +693,34 @@ class IronWorker{
 
     private function loadFromHash($options){
         if (empty($options)) return;
-        $this->token       = $this->token       ?: $options['token'];
-        $this->project_id  = $this->project_id  ?: $options['project_id'];
-        $this->protocol    = $this->protocol    ?: $options['protocol'];
-        $this->host        = $this->host        ?: $options['host'];
-        $this->port        = $this->port        ?: $options['port'];
-        $this->api_version = $this->api_version ?: $options['api_version'];
+        $this->setVarIfValue('token',       $options);
+        $this->setVarIfValue('project_id',  $options);
+        $this->setVarIfValue('protocol',    $options);
+        $this->setVarIfValue('host',        $options);
+        $this->setVarIfValue('port',        $options);
+        $this->setVarIfValue('api_version', $options);
     }
 
     private function loadFromEnv($prefix){
-        $this->token       = $this->token       ?: getenv($prefix. "_TOKEN");
-        $this->project_id  = $this->project_id  ?: getenv($prefix. "_PROJECT_ID");
-        $this->protocol    = $this->protocol    ?: getenv($prefix. "_SCHEME");
-        $this->host        = $this->host        ?: getenv($prefix. "_HOST");
-        $this->port        = $this->port        ?: getenv($prefix. "_PORT");
-        $this->api_version = $this->api_version ?: getenv($prefix. "_API_VERSION");
+        $this->setVarIfValue('token',       getenv($prefix. "_TOKEN"));
+        $this->setVarIfValue('project_id',  getenv($prefix. "_PROJECT_ID"));
+        $this->setVarIfValue('protocol',    getenv($prefix. "_SCHEME"));
+        $this->setVarIfValue('host',        getenv($prefix. "_HOST"));
+        $this->setVarIfValue('port',        getenv($prefix. "_PORT"));
+        $this->setVarIfValue('api_version', getenv($prefix. "_API_VERSION"));
+    }
+
+    private function setVarIfValue($key, $options_or_value){
+        if (!empty($this->$key)) return;
+        if (is_array($options_or_value)){
+            if (!empty($options_or_value[$key])){
+                $this->$key = $options_or_value[$key];
+            }
+        }else{
+            if (!empty($options_or_value)){
+                $this->$key = $options_or_value;
+            }
+        }
     }
 
     private function loadConfigFile($file){
@@ -719,8 +733,8 @@ class IronWorker{
             throw new InvalidArgumentException("Config file $file not parsed");
         };
 
-        $this->loadFromHash($data['iron_worker']);
-        $this->loadFromHash($data['iron']);
+        if (!empty($data['iron_worker'])) $this->loadFromHash($data['iron_worker']);
+        if (!empty($data['iron'])) $this->loadFromHash($data['iron']);
         $this->loadFromHash($data);
     }
 
