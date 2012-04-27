@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.1.3
+ * @version 1.2.1
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -69,7 +69,7 @@ class IronWorker_Exception extends Exception{
 class IronWorker{
 
     //Header Constants
-    const header_user_agent = "IronWorker PHP v0.1";
+    const header_user_agent = "iron_worker_php-1.2.1";
     const header_accept = "application/json";
     const header_accept_encoding = "gzip, deflate";
     const HTTP_OK = 200;
