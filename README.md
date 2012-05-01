@@ -13,14 +13,35 @@ To start using iron_worker_php, you need to sign up and get an oauth token.
 2. Get an Oauth Token at http://hud.iron.io/tokens
 
 ## Install iron_worker_php
-Just copy ```IronWorker.class.php``` and include it in your script:
+
+There are two ways to use iron_worker_php:
+
+#### Using precompiled phar archive:
+
+Copy `iron_worker.phar` to target directory and include it:
 
 ```php
 <?php
+require_once "phar://iron_worker.phar";
+```
+
+Please note, [phar](http://php.net/manual/en/book.phar.php) extension available by default only from php 5.3.0
+For php 5.2 you should install phar manually or use second option.
+
+#### Using classes directly
+
+1. Copy `IronWorker.class.php` to target directory
+2. Grab `IronCore.class.php` [there](https://github.com/iron-io/iron_core_php) and copy to target directory
+3. Include both of them:
+
+```php
+<?php
+require_once "IronCore.class.php"
 require_once "IronWorker.class.php"
 ```
+
 ## Configure
-Two ways to configure IronWorker:
+Three ways to configure IronWorker:
 
 * Passing array with options:
 
@@ -37,6 +58,15 @@ $iw = new IronWorker(array(
 <?php
 $iw = new IronWorker('config.ini');
 ```
+
+* Automatic config search - pass zero arguments to constructor and library will try to find config file in following locations:
+
+    * `iron.ini` in current directory
+    * `iron.json` in current directory
+    * `IRON_WORKER_TOKEN`, `IRON_WORKER_PROJECT_ID` and other environment variables
+    * `IRON_TOKEN`, `IRON_PROJECT_ID` and other environment variables
+    * `.iron.ini` in user's home directory
+    * `.iron.json` in user's home directory
 
 ## Creating a Worker
 
