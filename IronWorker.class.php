@@ -82,6 +82,7 @@ class IronWorker{
 
     public  $max_retries = 5;
     public  $debug_enabled = false;
+    public  $ssl_verifypeer = true;
 
     private $default_values = array(
         'protocol'    => 'https',
@@ -605,7 +606,7 @@ class IronWorker{
                 curl_setopt($s, CURLOPT_URL, $fullUrl);
                 break;
         }
-
+        curl_setopt($s, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
         curl_setopt($s, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($s, CURLOPT_HTTPHEADER, $this->compiledHeaders());
         return $this->callWithRetries($s);
