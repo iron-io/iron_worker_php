@@ -41,5 +41,6 @@ class AllTests extends TestSuite {
         $this->TestSuite('All tests');
         $this->addFile('test_uploading.php');
         $this->addFile('test_queuing.php');
+        $this->addFile('test_scheduling.php');
     }
 }

@@ -27,7 +27,7 @@ class TestUploading extends IronUnitTestCase {
     function testZipUploading(){
         IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true);
         $res = $this->worker->postCode('worker.php', '_worker.zip', 'TestWorker');
-        $this->assertTrue($res->status_code == '200');
+        $this->assertEqual($res->status_code, '200');
     }
 
     function testGetCodesList(){
@@ -39,8 +39,8 @@ class TestUploading extends IronUnitTestCase {
     function testGetCodeDetails(){
         $codes   = $this->worker->getCodes();
         $details = $this->worker->getCodeDetails($codes[0]->id);
-        $this->assertTrue($details->id   == $codes[0]->id);
-        $this->assertTrue($details->name == $codes[0]->name);
+        $this->assertEqual($details->id,   $codes[0]->id);
+        $this->assertEqual($details->name, $codes[0]->name);
     }
 
 
