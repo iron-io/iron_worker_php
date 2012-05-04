@@ -7,7 +7,7 @@
  * include("phar://".dirname(__FILE__)."/iron_worker.phar");
  */
  
-unlink('iron_worker.phar');
+@unlink('iron_worker.phar');
 
 $phar = new Phar('iron_worker.phar');
 
@@ -26,7 +26,7 @@ $phar->addFile('LICENSE', 'LICENSE');
 echo "\ndone - ".(round(filesize('iron_worker.phar')/1024,2))." KB\n";
 
 # Verification
-include("phar://iron_worker.phar");
+require "phar://iron_worker.phar";
 $worker = new IronWorker('config.ini');
 
 echo "Build finished successfully\n";
