@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.0
+ * @version 1.3.1
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -176,10 +176,14 @@ class IronWorker extends IronCore{
         return $projects->projects;
     }
 
-    public function getTasks(){
+    public function getTasks($page = 0, $per_page = 30){
         $url = "projects/{$this->project_id}/tasks";
         $this->setJsonHeaders();
-        $task = self::json_decode($this->apiCall(self::GET, $url));
+        $params = array(
+            'page'     => $page,
+            'per_page' => $per_page
+        );
+        $task = self::json_decode($this->apiCall(self::GET, $url, $params));
         return $task->tasks;
     }
 
@@ -189,10 +193,14 @@ class IronWorker extends IronCore{
         return json_decode($this->apiCall(self::GET, $url));
     }
 
-    public function getCodes(){
-        $this->setJsonHeaders();
+    public function getCodes($page = 0, $per_page = 30){
         $url = "projects/{$this->project_id}/codes";
-        $codes = self::json_decode($this->apiCall(self::GET, $url));
+        $this->setJsonHeaders();
+        $params = array(
+            'page'     => $page,
+            'per_page' => $per_page
+        );
+        $codes = self::json_decode($this->apiCall(self::GET, $url, $params));
         return $codes->codes;
     }
 
@@ -261,12 +269,18 @@ class IronWorker extends IronCore{
     /**
      * Get information about all schedules for project
      *
+     * @param int $page
+     * @param int $per_page
      * @return mixed
      */
-    public function getSchedules(){
-        $this->setJsonHeaders();
+    public function getSchedules($page = 0, $per_page = 30){
         $url = "projects/{$this->project_id}/schedules";
-        $schedules = self::json_decode($this->apiCall(self::GET, $url));
+        $this->setJsonHeaders();
+        $params = array(
+            'page'     => $page,
+            'per_page' => $per_page
+        );
+        $schedules = self::json_decode($this->apiCall(self::GET, $url, $params));
         return $schedules->schedules;
     }
 

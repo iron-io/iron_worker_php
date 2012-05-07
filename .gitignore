@@ -10,3 +10,4 @@ tmp/
 *.esproj/
 .idea/
 config.ini
+/__*
