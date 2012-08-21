@@ -560,7 +560,11 @@ class IronWorker extends IronCore{
                 if (\$v == '-id') \$args['task_id'] = \$argv[\$k+1];
                 if (\$v == '-d')  \$args['dir']     = \$argv[\$k+1];
                 if (\$v == '-payload' && file_exists(\$argv[\$k+1])){
-                    \$args['payload'] = json_decode(file_get_contents(\$argv[\$k+1]));
+                    \$args['payload'] = file_get_contents(\$argv[\$k + 1]);
+                    \$parsed_payload = json_decode(\$args['payload']);
+                    if (\$parsed_payload != null) {
+                        \$args['payload'] = \$parsed_payload;
+                    }
                 }
             }
             return \$args;
