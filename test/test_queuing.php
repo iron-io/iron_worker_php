@@ -46,13 +46,13 @@ class TestQueueing extends IronUnitTestCase {
     function testTaskProgress(){
         $task_id = $this->worker->postTask('TestWorker');
         $res = $this->worker->setTaskProgress($task_id, 50, 'Job half-done');
-        $this->assertEqual($res->status_code, 200);
+        $this->assertEqual($res->msg, 'Progress set');
     }
 
     function testDeleteTask(){
         $task_id = $this->worker->postTask('TestWorker');
         $res = $this->worker->deleteTask($task_id);
-        $this->assertEqual($res->status_code, 200);
+        $this->assertEqual($res->msg, 'Cancelled');
     }
 
     function testPostTaskOptions(){

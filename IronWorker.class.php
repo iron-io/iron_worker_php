@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.1
+ * @version 1.3.2
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.2.1';
+    protected $client_version = '1.3.2';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -80,13 +80,12 @@ class IronWorker extends IronCore{
             return false;
         }
         try{
-            $response = $this->postCode($run_filename, $temp_file, $code_name);
-            $is_ok = ($response->status_code == 200);
+            $this->postCode($run_filename, $temp_file, $code_name);
         }catch(Exception $e){
             unlink($temp_file);
             throw $e;
         }
-        return $is_ok;
+        return true;
     }
 
     /**

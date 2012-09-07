@@ -37,7 +37,7 @@ class TestScheduling extends IronUnitTestCase {
     function testDeleteSchedule(){
         $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 1);
         $res = $this->worker->deleteSchedule($schedule_id);
-        $this->assertEqual($res->status_code, 200);
+        $this->assertEqual($res->msg, 'Cancelled');
     }
 
 }
