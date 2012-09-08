@@ -47,7 +47,7 @@ Three ways to configure IronWorker:
 
 ```php
 <?php
-$iw = new IronWorker(array(
+$worker = new IronWorker(array(
     'token' => 'XXXXXXXXX',
     'project_id' => 'XXXXXXXXX'
 ));
@@ -56,7 +56,7 @@ $iw = new IronWorker(array(
 
 ```php
 <?php
-$iw = new IronWorker('config.ini');
+$worker = new IronWorker('config.ini');
 ```
 
 * Automatic config search - pass zero arguments to constructor and library will try to find config file in following locations:
@@ -85,7 +85,7 @@ You can upload worker in one step:
 # 1. Directory where worker files lies
 # 2. This file will be launched as worker
 # 3. Referenceable (unique) name for your worker
-$iw->upload(dirname(__FILE__)."/hello_world/", 'HelloWorld.php', 'HelloWorld');
+$worker->upload(dirname(__FILE__)."/hello_world/", 'HelloWorld.php', 'HelloWorld');
 
 ```
 OR zip and upload separately:
@@ -104,7 +104,7 @@ IronWorker::zipDirectory(dirname(__FILE__)."/hello_world/", 'worker.zip', true);
 
 ```php
 <?php
-$res = $iw->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
+$res = $worker->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
 ```
 Where 'HelloWorld' is a worker name which should be used later for queueing and scheduling.
 
@@ -116,7 +116,7 @@ You can find plenty of good worker examples here: [iron_worker_examples](https:/
 
 ```php
 <?php
-$task_id = $iw->postTask('HelloWorld');
+$task_id = $worker->postTask('HelloWorld');
 ```
 Worker should start in a few seconds.
 
@@ -129,7 +129,7 @@ If you want to run your code more than once or run it in regular intervals, you 
 $start_at = time() + 3*60;
 
 # Run task every 2 minutes, repeat 10 times
-$iw->postScheduleAdvanced('HelloWorld', array(), $start_at, 2*60, null, 10);
+$worker->postScheduleAdvanced('HelloWorld', array(), $start_at, 2*60, null, 10);
 ```
 
 ## Status of a Worker
@@ -137,8 +137,8 @@ To get the status of a worker, you can use the ```getTaskDetails()``` method.
 
 ```php
 <?php
-$task_id = $iw->postTask('HelloWorld');
-$details = $iw->getTaskDetails($task_id);
+$task_id = $worker->postTask('HelloWorld');
+$details = $worker->getTaskDetails($task_id);
 
 echo $details->status; # prints 'queued', 'complete', 'error' etc.
 ```
@@ -149,12 +149,12 @@ Use any function that print text inside your worker to put messages to log.
 
 ```php
 <?php
-$task_id = $iw->postTask('HelloWorld');
+$task_id = $worker->postTask('HelloWorld');
 sleep(10);
-$details = $iw->getTaskDetails($task_id);
+$details = $worker->getTaskDetails($task_id);
 # Check log only if task is finished.
 if ($details->status != 'queued'){
-    $log = $iw->getLog($task_id);
+    $log = $worker->getLog($task_id);
     echo $log; # prints "Hello PHP World!"
 }
 ```
@@ -174,11 +174,11 @@ $payload = array(
     )
 );
 
-$iw->postTask('HelloWorld', $payload);
+$worker->postTask('HelloWorld', $payload);
 
-$iw->postScheduleSimple('HelloWorld', $payload, 10)
+$worker->postScheduleSimple('HelloWorld', $payload, 10)
 
-$iw->postScheduleAdvanced('HelloWorld', $payload, time()+3*60, 2*60, null, 5);
+$worker->postScheduleAdvanced('HelloWorld', $payload, time()+3*60, 2*60, null, 5);
 ```
 
 When your code is executed, it will be passed three program arguments:
@@ -206,7 +206,18 @@ To set current task progress, just call `setProgress($percent, $message)` inside
 * percent - A percentage value that can be set to show how much progress a task is making
 * msg - A human readable message string that can be used when showing the status of a task
 
-To retrieve this data on client side, use `$iw->getTaskDetails($task_id);`
+To retrieve this data on client side, use `$worker->getTaskDetails($task_id);`
+
+# Troubleshooting
+
+### http error: 0
+
+If you see  `Uncaught exception 'Http_Exception' with message 'http error: 0 | '`
+it most likely caused by misconfigured cURL https sertificates.
+There are two ways to fix this error:
+
+  1) Disable SSL sertificate verification - add this line after IronWorker initialization: `$worker->ssl_verifypeer = false;`
+  2) Switch to http protocol - add this to configuration options: `protocol = http` and `port = 80`
 
 # Full Documentation
 
