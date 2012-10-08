@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.2
+ * @version 1.3.3
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.3.2';
+    protected $client_version = '1.3.3';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -70,17 +70,21 @@ class IronWorker extends IronCore{
      * @param string $directory Directory with worker files
      * @param string $run_filename This file will be launched as worker
      * @param string $code_name Referenceable (unique) name for your worker
+     * @param array $options Optional parameters:
+     *  - "max_concurrency" The maximum number of tasks that should be run in parallel.
+     *  - "retries" The number of auto-retries of failed task.
+     *  - "retries_delay" Delay in seconds between retries.
      * @return bool Result of operation
      * @throws Exception
      */
-    public function upload($directory, $run_filename, $code_name){
+    public function upload($directory, $run_filename, $code_name, $options = array()){
         $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
         if (!self::zipDirectory($directory, $temp_file, true)){
             unlink($temp_file);
             return false;
         }
         try{
-            $this->postCode($run_filename, $temp_file, $code_name);
+            $this->postCode($run_filename, $temp_file, $code_name, $options);
         }catch(Exception $e){
             unlink($temp_file);
             throw $e;
@@ -218,9 +222,13 @@ class IronWorker extends IronCore{
      * @param string $filename This file will be launched as worker
      * @param string $zipFilename zip file containing code to execute
      * @param string $name referenceable (unique) name for your worker
+     * @param array $options Optional parameters:
+     *  - "max_concurrency" The maximum number of tasks that should be run in parallel.
+     *  - "retries" The number of auto-retries of failed task.
+     *  - "retries_delay" Delay in seconds between retries.
      * @return mixed
      */
-    public function postCode($filename, $zipFilename, $name){
+    public function postCode($filename, $zipFilename, $name, $options = array()){
 
         // Add IronWorker functions to the uploaded worker
         $this->addRunnerToArchive($zipFilename, $filename);
@@ -241,6 +249,7 @@ class IronWorker extends IronCore{
             "options"    => array(),
             "access_key" => $name
         );
+        $sendingData = array_merge($sendingData, $options);
         $url = "projects/{$this->project_id}/codes";
         $post = array(
             "data" => json_encode($sendingData),
