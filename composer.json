@@ -1,0 +1,28 @@
+{
+    "name": "iron-io/iron_worker",
+    "type": "library",
+    "description": "Client library for IronWorker (multi-language worker platform that runs tasks in the background, in parallel, and at scale.)",
+    "keywords": ["worker","job","delayed_job","iron","iron_worker","background","task"],
+    "homepage": "http://github.com/iron-io/iron_worker_php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander S",
+            "email": "alexander@iron.io",
+            "homepage": "http://iron.io",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "autoload": {
+        "files": ["iron_worker.phar"]
+    },
+    "repositories":[
+        {
+            "type":"git",
+            "url":"http://github.com/iron-io/iron_worker_php"
+        }
+    ]
+}
