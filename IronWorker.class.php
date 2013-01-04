@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.4
+ * @version 1.3.5
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.3.4';
+    protected $client_version = '1.3.5';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -465,9 +465,9 @@ class IronWorker extends IronCore{
         return false;
     }
 
-    /* PRIVATE FUNCTIONS */
 
     /**
+     * Schedule a task
      *
      * @param string $name
      * @param array $options options contain:
@@ -479,7 +479,7 @@ class IronWorker extends IronCore{
      * @param array $payload
      * @return mixed
      */
-    private function postSchedule($name, $options, $payload = array()){
+    public function postSchedule($name, $options, $payload = array()){
         $url = "projects/{$this->project_id}/schedules";
         $shedule = array(
            'name' => $name,
@@ -497,6 +497,8 @@ class IronWorker extends IronCore{
         $shedules = self::json_decode($res);
         return $shedules->schedules[0]->id;
     }
+
+    /* PRIVATE FUNCTIONS */
 
     private function runtimeFileType($name) {
         if(empty($name)){
