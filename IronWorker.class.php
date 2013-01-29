@@ -179,13 +179,14 @@ class IronWorker extends IronCore{
         return $projects->projects;
     }
 
-    public function getTasks($page = 0, $per_page = 30){
+    public function getTasks($page = 0, $per_page = 30, $additional_params = array()){
         $url = "projects/{$this->project_id}/tasks";
         $this->setJsonHeaders();
         $params = array(
             'page'     => $page,
             'per_page' => $per_page
         );
+        $params = array_merge($additional_params, $params);
         $task = self::json_decode($this->apiCall(self::GET, $url, $params));
         return $task->tasks;
     }
