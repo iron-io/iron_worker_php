@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.5
+ * @version 1.3.6
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.3.5';
+    protected $client_version = '1.3.6';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -179,14 +179,25 @@ class IronWorker extends IronCore{
         return $projects->projects;
     }
 
-    public function getTasks($page = 0, $per_page = 30, $additional_params = array()){
+    /**
+     * List Tasks
+     *
+     * @param int $page Page. Default is 0, maximum is 100.
+     * @param int $per_page The number of tasks to return per page. Default is 30, maximum is 100.
+     * @param array $options Optional URL Parameters
+     * Filter by Status: the parameters queued, running, complete, error, cancelled, killed, and timeout will all filter by their respective status when given a value of 1. These parameters can be mixed and matched to return tasks that fall into any of the status filters. If no filters are provided, tasks will be displayed across all statuses.
+     * - "rom_time" Limit the retrieved tasks to only those that were created after the time specified in the value. Time should be formatted as the number of seconds since the Unix epoch.
+     * - "to_time" Limit the retrieved tasks to only those that were created before the time specified in the value. Time should be formatted as the number of seconds since the Unix epoch.
+     * @return mixed
+     */
+    public function getTasks($page = 0, $per_page = 30, $options = array()){
         $url = "projects/{$this->project_id}/tasks";
         $this->setJsonHeaders();
         $params = array(
             'page'     => $page,
             'per_page' => $per_page
         );
-        $params = array_merge($additional_params, $params);
+        $params = array_merge($options, $params);
         $task = self::json_decode($this->apiCall(self::GET, $url, $params));
         return $task->tasks;
     }
