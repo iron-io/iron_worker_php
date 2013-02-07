@@ -561,11 +561,8 @@ class IronWorker extends IronCore{
             throw new RuntimeException("Method can be used only inside a worker");
         }
         $args = getArgs();
-        echo "args: ";
-        print_r($args);
-
         $task_id = $args['task_id'];
-        var_dump($task_id);
+
         return $this->setProgress($task_id, $percent, $msg);
     }
 
