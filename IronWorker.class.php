@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.6
+ * @version 1.3.7
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.3.6';
+    protected $client_version = '1.3.7';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -510,6 +510,65 @@ class IronWorker extends IronCore{
         return $shedules->schedules[0]->id;
     }
 
+    /**
+     * Set a Task’s Progress
+     *
+     * Example (inside a worker):
+     * <code>
+     * require_once "phar://iron_worker.phar";
+     * $worker = new IronWorker(); # assuming you have iron.json inside a worker
+     * $args = getArgs();
+     * $task_id = $args['task_id'];
+     * $worker->setProgress($task_id, 50, "Task is half-done");
+     * </code>
+     *
+     * @param int $percent An integer, between 0 and 100 inclusive, that describes the completion of the task.
+     * @param string $msg Any message or data describing the completion of the task. Must be a string value, and the 64KB request limit applies.
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function setProgress($task_id, $percent, $msg = ''){
+        if (empty($task_id)){
+            throw new InvalidArgumentException("Please set task_id");
+        }
+        $url = "projects/{$this->project_id}/tasks/$task_id/progress";
+        $request = array(
+            'percent' => $percent,
+            'msg'     => $msg
+        );
+
+        $this->setCommonHeaders();
+        $res = $this->apiCall(self::POST, $url, $request);
+        return self::json_decode($res);
+    }
+
+    /**
+     * Set a Task’s Progress. Work only inside a worker
+     *
+     * Example (inside a worker):
+     * <code>
+     * require_once "phar://iron_worker.phar";
+     * $worker = new IronWorker(); # assuming you have iron.json inside a worker
+     * $worker->setCurrentTaskProgress(50, "Task is half-done");
+     * </code>
+     * @param int $percent An integer, between 0 and 100 inclusive, that describes the completion of the task.
+     * @param string $msg Any message or data describing the completion of the task. Must be a string value, and the 64KB request limit applies.
+     * @return mixed
+     * @throws RuntimeException
+     */
+    public function setCurrentTaskProgress($percent, $msg = ''){
+        if (!function_exists('getArgs')){
+            throw new RuntimeException("Method can be used only inside a worker");
+        }
+        $args = getArgs();
+        echo "args: ";
+        print_r($args);
+
+        $task_id = $args['task_id'];
+        var_dump($task_id);
+        return $this->setProgress($task_id, $percent, $msg);
+    }
+
     /* PRIVATE FUNCTIONS */
 
     private function runtimeFileType($name) {
@@ -597,29 +656,6 @@ class IronWorker extends IronCore{
             return \$args['payload'];
         }
 
-        function setProgress(\$percent, \$msg = ''){
-            \$args = getArgs();
-            \$task_id = \$args['task_id'];
-            \$base_url   = '[URL]';
-            \$project_id = '[PROJECT_ID]';
-            \$headers    =  [HEADERS];
-
-            \$url = "{\$base_url}projects/\$project_id/tasks/\$task_id/progress";
-            \$params = array(
-                'percent' => \$percent,
-                'msg'     => \$msg
-            );
-
-            \$s = curl_init();
-            curl_setopt(\$s, CURLOPT_URL,  \$url);
-            curl_setopt(\$s, CURLOPT_POST, true);
-            curl_setopt(\$s, CURLOPT_POSTFIELDS, json_encode(\$params));
-            curl_setopt(\$s, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt(\$s, CURLOPT_HTTPHEADER, \$headers);
-            \$out = curl_exec(\$s);
-            curl_close(\$s);
-            return json_decode(\$out);
-        }
         require dirname(__FILE__)."/[SCRIPT]";
 EOL;
         $header = str_replace(
