@@ -73,6 +73,40 @@ class TestQueueing extends IronUnitTestCase {
         $this->assertEqual($details->status, 'complete');
     }
 
+    function  testListTasksAll(){
+        $task_id = $this->worker->postTask('TestWorker');
+        $data = $this->worker->getTasks();
+        $this->assertIsA($data, 'Array');
+    }
+
+    function  testListTasksFilter(){
+        $task_id = $this->worker->postTask('TestWorker', Array(), Array('delay' => 200));
+
+        #$this->worker->debug_enabled = true;
+
+        $data = $this->worker->getTasks(0, 10, array('queued' => 1));
+        $this->assertIsA($data, 'Array');
+        $this->assertTrue(sizeof($data) > 0);
+        foreach($data as $task){
+            #TODO: test & uncomment
+            #$this->assertEqual($task->status, 'queued');
+        }
+    }
+
+
+    function testSetProgress(){
+        $task_id = $this->worker->postTask('TestWorker');
+
+        $this->worker->setProgress($task_id, 77, 'test value');
+        $details = $this->worker->getTaskDetails($task_id);
+        $this->assertEqual($details->percent, 77);
+        $this->assertEqual($details->msg, 'test value');
+    }
+
+
+
+
+
 
 
 
