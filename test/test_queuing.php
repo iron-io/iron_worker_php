@@ -68,7 +68,6 @@ class TestQueueing extends IronUnitTestCase {
         $this->assertEqual($details->status,   'queued');
         $this->assertEqual($details->priority, 2);
         $this->assertEqual($details->delay,    10);
-        sleep(10);
         $details = $this->worker->waitFor($task_id, 4, 60);
         $this->assertEqual($details->status, 'complete');
     }

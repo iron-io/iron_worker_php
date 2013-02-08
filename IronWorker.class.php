@@ -439,19 +439,6 @@ class IronWorker extends IronCore{
         return $this->cancelTask($task_id);
     }
 
-    public function setTaskProgress($task_id, $percent, $msg = ''){
-        if (empty($task_id)){
-            throw new InvalidArgumentException("Please set task_id");
-        }
-        $url = "projects/{$this->project_id}/tasks/$task_id/progress";
-        $request = array(
-            'percent' => $percent,
-            'msg'     => $msg
-        );
-
-        $this->setCommonHeaders();
-        return self::json_decode($this->apiCall(self::POST, $url, $request));
-    }
     /**
      * Wait while the task specified by task_id executes
      *
@@ -522,6 +509,7 @@ class IronWorker extends IronCore{
      * $worker->setProgress($task_id, 50, "Task is half-done");
      * </code>
      *
+     * @param string $task_id Task ID
      * @param int $percent An integer, between 0 and 100 inclusive, that describes the completion of the task.
      * @param string $msg Any message or data describing the completion of the task. Must be a string value, and the 64KB request limit applies.
      * @return mixed
@@ -540,6 +528,18 @@ class IronWorker extends IronCore{
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
         return self::json_decode($res);
+    }
+
+    /**
+     * Alias for setProgress()
+     *
+     * @param string $task_id Task ID
+     * @param int $percent
+     * @param string $msg
+     * @return mixed
+     */
+    public function setTaskProgress($task_id, $percent, $msg = ''){
+        return $this->setProgress($task_id, $percent, $msg);
     }
 
     /**
