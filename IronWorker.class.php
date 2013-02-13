@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.7
+ * @version 1.3.8
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception{
  */
 class IronWorker extends IronCore{
 
-    protected $client_version = '1.3.7';
+    protected $client_version = '1.3.8';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
