@@ -14,14 +14,14 @@
 /**
  * IronWorker internal exceptions representation
  */
-class IronWorker_Exception extends Exception{
+class IronWorker_Exception extends Exception {
 
 }
 
 /**
  * Class that wraps IronWorker API calls.
  */
-class IronWorker extends IronCore{
+class IronWorker extends IronCore {
 
     protected $client_version = '1.3.8';
     protected $client_name    = 'iron_worker_php';    
