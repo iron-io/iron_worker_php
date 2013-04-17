@@ -213,10 +213,10 @@ To retrieve this data on client side, use `$worker->getTaskDetails($task_id);`
 ### http error: 0
 
 If you see  `Uncaught exception 'Http_Exception' with message 'http error: 0 | '`
-it most likely caused by misconfigured cURL https sertificates.
+it most likely caused by misconfigured cURL https certificates.
 There are two ways to fix this error:
 
-1. Disable SSL sertificate verification - add this line after IronWorker initialization: `$worker->ssl_verifypeer = false;`
+1. Disable SSL certificate verification - add this line after IronWorker initialization: `$worker->ssl_verifypeer = false;`
 2. Switch to http protocol - add this to configuration options: `protocol = http` and `port = 80`
 
 # Full Documentation
