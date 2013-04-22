@@ -78,7 +78,27 @@ echo "Hello PHP World!\n";
 ```
 ## Upload code to server
 
-You can upload worker in one step:
+There are few different ways to upload workers on IronWorker servers
+
+### Using CLI tool (preferred)
+
+* Get [CLI](http://dev.iron.io/worker/reference/cli) tool
+* Download or create `iron.json` config file with project_id/password
+* Create `HelloWorld.worker` file, example:
+
+```ruby
+runtime 'php'
+exec 'HelloWorld.php'
+```
+* Upload!
+
+```sh
+$ iron_worker upload HelloWorld
+```
+
+[.worker syntax reference](http://dev.iron.io/worker/reference/dotworker/)
+
+### Using PHP class
 
 ```php
 <?php
@@ -88,25 +108,6 @@ You can upload worker in one step:
 $worker->upload(dirname(__FILE__)."/hello_world/", 'HelloWorld.php', 'HelloWorld');
 
 ```
-OR zip and upload separately:
-
-* Zip worker:
-
-```php
-<?php
-# Zip single file:
-IronWorker::createZip(dirname(__FILE__), array('HelloWorld.php'), 'worker.zip', true);
-# OR
-# Zip whole directory:
-IronWorker::zipDirectory(dirname(__FILE__)."/hello_world/", 'worker.zip', true);
-```
-* Submit worker:
-
-```php
-<?php
-$res = $worker->postCode('HelloWorld.php', 'worker.zip', 'HelloWorld');
-```
-Where 'HelloWorld' is a worker name which should be used later for queueing and scheduling.
 
 ## Worker examples
 
