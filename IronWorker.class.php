@@ -630,44 +630,55 @@ class IronWorker extends IronCore {
      */
     private function workerHeader($worker_file_name){
         $header = <<<EOL
-        <?php
-        /*IRON_WORKER_HEADER*/
-        function getArgs(){
-            global \$argv;
-            \$args = array('task_id' => null, 'dir' => null, 'payload' => array(), 'config' => array());
-            foreach(\$argv as \$k => \$v){
-                if (empty(\$argv[\$k+1])) continue;
-                if (\$v == '-id') \$args['task_id'] = \$argv[\$k+1];
-                if (\$v == '-d')  \$args['dir']     = \$argv[\$k+1];
-                if (\$v == '-payload' && file_exists(\$argv[\$k+1])){
-                    \$args['payload'] = file_get_contents(\$argv[\$k + 1]);
-                    \$parsed_payload = json_decode(\$args['payload']);
-                    if (\$parsed_payload != null) {
-                        \$args['payload'] = \$parsed_payload;
-                    }
-                }
-                if (\$v == '-config' && file_exists(\$argv[\$k + 1])){
-                    \$args['config'] = file_get_contents(\$argv[\$k + 1]);
-                    \$parsed_config = json_decode(\$args['config'], true);
-                    if (\$parsed_config != null) {
-                        \$args['config'] = \$parsed_config;
-                    }
-                }
+<?php
+/*IRON_WORKER_HEADER*/
+function getArgs(){
+    global \$argv;
+
+    \$args = array('task_id' => null, 'dir' => null, 'payload' => array(), 'config' => null);
+
+    foreach(\$argv as \$k => \$v){
+        if (empty(\$argv[\$k + 1])) continue;
+
+        if (\$v == '-id') \$args['task_id'] = \$argv[\$k + 1];
+        if (\$v == '-d')  \$args['dir']     = \$argv[\$k + 1];
+
+        if (\$v == '-payload' && file_exists(\$argv[\$k + 1])){
+            \$args['payload'] = file_get_contents(\$argv[\$k + 1]);
+
+            \$parsed_payload = json_decode(\$args['payload']);
+
+            if (\$parsed_payload != null) {
+                \$args['payload'] = \$parsed_payload;
             }
-            return \$args;
         }
 
-        function getPayload(){
-            \$args = getArgs();
-            return \$args['payload'];
-        }
+        if (\$v == '-config' && file_exists(\$argv[\$k + 1])){
+            \$args['config'] = file_get_contents(\$argv[\$k + 1]);
 
-        function getConfig(){
-            \$args = getArgs();
-            return \$args['config'];
-        }
+            \$parsed_config = json_decode(\$args['config'], true);
 
-        require dirname(__FILE__)."/[SCRIPT]";
+            if (\$parsed_config != null) {
+                \$args['config'] = \$parsed_config;
+            }
+        }
+    }
+    return \$args;
+}
+
+function getPayload(){
+    \$args = getArgs();
+
+    return \$args['payload'];
+}
+
+function getConfig(){
+    \$args = getArgs();
+
+    return \$args['config'];
+}
+
+require dirname(__FILE__)."/[SCRIPT]";
 EOL;
         $header = str_replace(
             array('[PROJECT_ID]','[URL]','[HEADERS]','[SCRIPT]'),
