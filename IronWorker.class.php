@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.3.8
+ * @version 1.4.0
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception {
  */
 class IronWorker extends IronCore {
 
-    protected $client_version = '1.3.8';
+    protected $client_version = '1.4.0';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -634,7 +634,7 @@ class IronWorker extends IronCore {
         /*IRON_WORKER_HEADER*/
         function getArgs(){
             global \$argv;
-            \$args = array('task_id' => null, 'dir' => null, 'payload' => array());
+            \$args = array('task_id' => null, 'dir' => null, 'payload' => array(), 'config' => array());
             foreach(\$argv as \$k => \$v){
                 if (empty(\$argv[\$k+1])) continue;
                 if (\$v == '-id') \$args['task_id'] = \$argv[\$k+1];
@@ -646,6 +646,13 @@ class IronWorker extends IronCore {
                         \$args['payload'] = \$parsed_payload;
                     }
                 }
+                if (\$v == '-config' && file_exists(\$argv[\$k + 1])){
+                    \$args['config'] = file_get_contents(\$argv[\$k + 1]);
+                    \$parsed_config = json_decode(\$args['config'], true);
+                    if (\$parsed_config != null) {
+                        \$args['config'] = \$parsed_config;
+                    }
+                }
             }
             return \$args;
         }
@@ -653,6 +660,11 @@ class IronWorker extends IronCore {
         function getPayload(){
             \$args = getArgs();
             return \$args['payload'];
+        }
+
+        function getConfig(){
+            \$args = getArgs();
+            return \$args['config'];
         }
 
         require dirname(__FILE__)."/[SCRIPT]";
