@@ -74,6 +74,7 @@ class IronWorker extends IronCore {
      *  - "max_concurrency" The maximum number of tasks that should be run in parallel.
      *  - "retries" The number of auto-retries of failed task.
      *  - "retries_delay" Delay in seconds between retries.
+     *  - "config" : An arbitrary string (usually YAML or JSON) that, if provided, will be available in a file that your worker can access. File location will be passed in via the -config argument. The config cannot be larger than 64KB in size.
      * @return bool Result of operation
      * @throws Exception
      */
@@ -238,6 +239,7 @@ class IronWorker extends IronCore {
      *  - "max_concurrency" The maximum number of tasks that should be run in parallel.
      *  - "retries" The number of auto-retries of failed task.
      *  - "retries_delay" Delay in seconds between retries.
+     *  - "config" : An arbitrary string (usually YAML or JSON) that, if provided, will be available in a file that your worker can access. File location will be passed in via the -config argument. The config cannot be larger than 64KB in size.
      * @return mixed
      */
     public function postCode($filename, $zipFilename, $name, $options = array()){
