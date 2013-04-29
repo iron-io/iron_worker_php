@@ -40,6 +40,12 @@ require_once "IronCore.class.php"
 require_once "IronWorker.class.php"
 ```
 
+#### Using Composer
+
+Follow instructions at https://packagist.org/
+
+[iron_worker package](https://packagist.org/packages/iron-io/iron_worker)
+
 ## Configure
 Three ways to configure IronWorker:
 
@@ -76,9 +82,8 @@ Here's an example worker:
 <?php
 echo "Hello PHP World!\n";
 ```
-## Upload code to server
 
-There are few different ways to upload workers on IronWorker servers
+## Upload code to server
 
 ### Using CLI tool (preferred)
 
@@ -97,17 +102,6 @@ $ iron_worker upload HelloWorld
 ```
 
 [.worker syntax reference](http://dev.iron.io/worker/reference/dotworker/)
-
-### Using PHP class
-
-```php
-<?php
-# 1. Directory where worker files lies
-# 2. This file will be launched as worker
-# 3. Referenceable (unique) name for your worker
-$worker->upload(dirname(__FILE__)."/hello_world/", 'HelloWorld.php', 'HelloWorld');
-
-```
 
 ## Worker examples
 
@@ -182,13 +176,14 @@ $worker->postScheduleSimple('HelloWorld', $payload, 10)
 $worker->postScheduleAdvanced('HelloWorld', $payload, time()+3*60, 2*60, null, 5);
 ```
 
-When your code is executed, it will be passed three program arguments:
+When your code is executed, it will be passed four program arguments:
 
 * **-id** - The task id.
 * **-payload** - the filename containing the data payload for this particular task.
 * **-d** - the user writable directory that can be used while running your job.
+* **-config** - the filename containing config data (if available) for particular code.
 
-IronWorker provide functions `getArgs()` and `getPayload()` in your worker to help you using payload:
+IronWorker provide functions `getArgs()`, `getPayload()`, `getConfig()` in your worker to help you using payload:
 
 ```php
 <?php
