@@ -94,7 +94,7 @@ class IronWorker extends IronCore {
     }
 
     /**
-     * Creates a zip archieve from array of file names
+     * Creates a zip archive from array of file names
      *
      * Example:
      * <code>
@@ -141,7 +141,7 @@ class IronWorker extends IronCore {
     }
 
     /**
-     * Creates a zip archieve with all files and folders inside specific directory.
+     * Creates a zip archive with all files and folders inside specific directory.
      *
      * Example:
      * <code>
