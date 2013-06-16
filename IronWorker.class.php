@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.4.0
+ * @version 1.4.1
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -23,7 +23,7 @@ class IronWorker_Exception extends Exception {
  */
 class IronWorker extends IronCore {
 
-    protected $client_version = '1.4.0';
+    protected $client_version = '1.4.1';
     protected $client_name    = 'iron_worker_php';    
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -369,26 +369,52 @@ class IronWorker extends IronCore {
      * @return string Created Task ID
      */
     public function postTask($name, $payload = array(), $options = array()){
+
+        $ids = $this->postTasks($name, array($payload), $options);
+
+        return $ids[0];
+    }
+
+    /**
+     * Queues many tasks at a time
+     *
+     * @param string $name Package name
+     * @param array $payloads. Each payload will be converted to separate task
+     * @param array $options same as postTask()
+     * @return array IDs
+     */
+    public function postTasks($name, $payloads = array(), $options = array()){
         $url = "projects/{$this->project_id}/tasks";
 
         $request = array(
-            'tasks' => array(
-                array(
-                    "name"      => $name,
-                    "code_name" => $name,
-                    'payload' => json_encode($payload),
-                )
-            )
+            'tasks' => array()
         );
 
-        foreach ($options as $k => $v){
-            $request['tasks'][0][$k] = $v;
+        foreach($payloads as $payload){
+
+            $task_data = array(
+                "name"      => $name,
+                "code_name" => $name,
+                'payload' => json_encode($payload),
+
+            );
+
+            foreach ($options as $k => $v){
+                $task_data[$k] = $v;
+            }
+
+            $request['tasks'][] = $task_data;
         }
 
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
         $tasks = self::json_decode($res);
-        return $tasks->tasks[0]->id;
+
+        $ids = array();
+        foreach($tasks->tasks as $task){
+            $ids[] = $task->id;
+        }
+        return $ids;
     }
 
     public function getLog($task_id){

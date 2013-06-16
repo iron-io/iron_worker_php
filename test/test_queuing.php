@@ -19,6 +19,12 @@ class TestQueueing extends IronUnitTestCase {
         $this->assertTrue(strlen($task_id) > 0);
     }
 
+    function testPostTasks(){
+        $ids = $this->worker->postTasks('TestWorker', array(array(), array()));
+        $this->assertTrue(is_array($ids));
+        $this->assertEqual(sizeof($ids), 2);
+    }
+
     function testWaitFor(){
         $task_id = $this->worker->postTask('TestWorker');
         $details = $this->worker->waitFor($task_id);
