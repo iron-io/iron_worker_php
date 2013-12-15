@@ -6,35 +6,41 @@ require_once '../../tools/simpletest/autorun.php';
 require_once '../../iron_core_php/IronCore.class.php';
 require_once '../IronWorker.class.php';
 
-class IronUnitTestCase extends UnitTestCase {
+class IronUnitTestCase extends UnitTestCase
+{
     public $worker;
 
-    function setUp() {
+    public function setUp()
+    {
         $ini_config = parse_ini_file('../config.ini', true);
         $config = $ini_config['iron_worker'];
 
-        $this->write_json_file(array('iron_worker' => $config));
-        $this->write_ini_file(array('iron_worker' => $config));
+        $this->writeJson_File(array('iron_worker' => $config));
+        $this->writeIniFile(array('iron_worker' => $config));
     }
 
-    function tearDown() {
+    public function tearDown()
+    {
         @unlink(dirname(__FILE__)."/_config.json");
         @unlink(dirname(__FILE__)."/_config.ini");
         @unlink(dirname(__FILE__)."/_worker.zip");
     }
 
-    function workerDir() {
+    public function workerDir()
+    {
         return dirname(__FILE__)."/worker/";
     }
 
-    function write_json_file($data) {
+    public function writeJson_File($data)
+    {
         file_put_contents(dirname(__FILE__)."/_config.json", json_encode($data));
     }
 
-    function write_ini_file($array, $quote_keys = true) {
+    public function writeIniFile($array, $quote_keys = true)
+    {
         $file = dirname(__FILE__)."/_config.ini";
         $text = '';
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $text .= "[$key]\r\n";
                 foreach ($value as $k => $v) {
@@ -52,8 +58,10 @@ class IronUnitTestCase extends UnitTestCase {
 }
 
 
-class AllTests extends TestSuite {
-    function AllTests() {
+class AllTests extends TestSuite
+{
+    public function AllTests()
+    {
         $this->TestSuite('All tests');
         $this->addFile('test_uploading.php');
         $this->addFile('test_queuing.php');
