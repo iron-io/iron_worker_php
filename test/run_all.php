@@ -15,7 +15,7 @@ class IronUnitTestCase extends UnitTestCase
         $ini_config = parse_ini_file('../config.ini', true);
         $config = $ini_config['iron_worker'];
 
-        $this->writeJson_File(array('iron_worker' => $config));
+        $this->writeJsonFile(array('iron_worker' => $config));
         $this->writeIniFile(array('iron_worker' => $config));
     }
 
@@ -31,7 +31,7 @@ class IronUnitTestCase extends UnitTestCase
         return dirname(__FILE__)."/worker/";
     }
 
-    public function writeJson_File($data)
+    public function writeJsonFile($data)
     {
         file_put_contents(dirname(__FILE__)."/_config.json", json_encode($data));
     }
@@ -60,7 +60,7 @@ class IronUnitTestCase extends UnitTestCase
 
 class AllTests extends TestSuite
 {
-    public function AllTests()
+    public function allTests()
     {
         $this->TestSuite('All tests');
         $this->addFile('test_uploading.php');
