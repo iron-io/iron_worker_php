@@ -148,7 +148,7 @@ $task_id = $worker->postTask('HelloWorld');
 sleep(10);
 $details = $worker->getTaskDetails($task_id);
 # Check log only if task is finished.
-if ($details->status != 'queued'){
+if ($details->status != 'queued') {
     $log = $worker->getLog($task_id);
     echo $log; # prints "Hello PHP World!"
 }

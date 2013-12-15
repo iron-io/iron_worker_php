@@ -12,13 +12,13 @@ class TestScheduling extends IronUnitTestCase {
         parent::tearDown();
     }
 
-    function postScheduleAdvanced(){
+    function postScheduleAdvanced() {
         $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time(), 60, null, 2);
         $this->assertTrue(is_string($schedule_id));
     }
 
 
-    function testGetSchedules(){
+    function testGetSchedules() {
         $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 2);
         $schedules = $this->worker->getSchedules();
         $this->assertTrue(is_array($schedules));
@@ -26,7 +26,7 @@ class TestScheduling extends IronUnitTestCase {
     }
 
 
-    function testGetSchedule(){
+    function testGetSchedule() {
         $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 1);
         $schedule    = $this->worker->getSchedule($schedule_id);
         $this->assertEqual($schedule->code_name, 'TestWorker');
@@ -35,7 +35,7 @@ class TestScheduling extends IronUnitTestCase {
     }
 
 
-    function testDeleteSchedule(){
+    function testDeleteSchedule() {
         $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 1);
         $res = $this->worker->deleteSchedule($schedule_id);
         $this->assertEqual($res->msg, 'Cancelled');

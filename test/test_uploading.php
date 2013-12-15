@@ -25,20 +25,20 @@ class TestUploading extends IronUnitTestCase {
         );
     }
 
-    function testZipUploading(){
+    function testZipUploading() {
         IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true);
         $res = $this->worker->postCode('worker.php', '_worker.zip', 'TestWorker');
         $this->assertEqual($res->msg, 'Upload successful.');
     }
 
-    function testGetCodesList(){
+    function testGetCodesList() {
         $codes = $this->worker->getCodes();
         $this->assertTrue(is_array($codes));
         $this->assertTrue(strlen($codes[0]->id) > 0);
     }
 
 
-    function testUploadingWithOptions(){
+    function testUploadingWithOptions() {
         $options = array(
             'max_concurrency' => 10,
             'retries' => 5,
@@ -49,8 +49,8 @@ class TestUploading extends IronUnitTestCase {
         $codes = $this->worker->getCodes();
 
         $is_worker_present = false;
-        foreach($codes as $code){
-            if ($code->name == 'TestWorkerOptions'){
+        foreach($codes as $code) {
+            if ($code->name == 'TestWorkerOptions') {
                 $this->assertEqual($code->max_concurrency, 10);
                 $this->assertEqual($code->retries, 5);
                 $this->assertEqual($code->retries_delay, 20);
@@ -60,7 +60,7 @@ class TestUploading extends IronUnitTestCase {
         $this->assertTrue($is_worker_present);
     }
 
-    function testGetCodeDetails(){
+    function testGetCodeDetails() {
         $codes   = $this->worker->getCodes();
         $details = $this->worker->getCodeDetails($codes[0]->id);
         $this->assertEqual($details->id,   $codes[0]->id);
