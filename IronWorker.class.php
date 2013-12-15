@@ -529,7 +529,7 @@ class IronWorker extends IronCore
      */
     public function waitFor($task_id, $sleep = 5, $max_wait_time = 0)
     {
-        while(1) {
+        while (1) {
             $details = $this->getTaskDetails($task_id);
 
             if ($details->status != 'queued' && $details->status != 'running') {
