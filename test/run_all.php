@@ -23,26 +23,26 @@ class IronUnitTestCase extends UnitTestCase {
         @unlink(dirname(__FILE__)."/_worker.zip");
     }
 
-    function workerDir(){
+    function workerDir() {
         return dirname(__FILE__)."/worker/";
     }
 
-    function write_json_file($data){
+    function write_json_file($data) {
         file_put_contents(dirname(__FILE__)."/_config.json", json_encode($data));
     }
 
-    function write_ini_file($array, $quote_keys = true){
+    function write_ini_file($array, $quote_keys = true) {
         $file = dirname(__FILE__)."/_config.ini";
         $text = '';
-        foreach($array as $key => $value){
+        foreach($array as $key => $value) {
             if (is_array($value)) {
                 $text .= "[$key]\r\n";
-                foreach ($value as $k => $v){
+                foreach ($value as $k => $v) {
                      $text .= (is_numeric($k) || ctype_xdigit($k) || !$quote_keys ? "$k=" : '"'.$k.'"=').
                         (is_numeric($v) || ctype_xdigit($v) ? "$v\r\n" : '"'.$v.'"'."\r\n");
                 }
                 $text .= "\r\n";
-            }else {
+            } else {
                 $text .= (is_numeric($key) || ctype_xdigit($key) || !$quote_keys ? "$key=" : '"'.$key.'"=').
                     (is_numeric($value) || ctype_xdigit($value) ? "$value\r\n" : '"'.$value.'"'."\r\n");
             }
