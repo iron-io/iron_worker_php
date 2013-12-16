@@ -21,11 +21,11 @@ require "phar://iron_worker.phar/IronWorker.class.php";
 __HALT_COMPILER(); ?>');
 
 # Files
-$phar->addFile('../iron_core_php/IronCore.class.php','IronCore.class.php');
+$phar->addFile('../iron_core_php/IronCore.class.php', 'IronCore.class.php');
 $phar->addFile('IronWorker.class.php');
 $phar->addFile('LICENSE', 'LICENSE');
 
-echo "\ndone - ".(round(filesize('iron_worker.phar')/1024,2))." KB\n";
+echo "\ndone - ".(round(filesize('iron_worker.phar')/1024, 2))." KB\n";
 
 # Verification
 require "phar://iron_worker.phar";
