@@ -303,6 +303,48 @@ class IronWorker extends IronCore
         return self::json_decode($response);
     }
 
+    /**
+     * Download Code Package
+     *
+     * @param String $code_id.
+     *
+     * @throws InvalidArgumentException
+     * @return zipped file
+     */
+    public function downloadCode($code_id)
+    {
+        if (empty($code_id)) {
+            throw new InvalidArgumentException("Please set code_id");
+        }
+        $url = "projects/{$this->project_id}/codes/$code_id/download";
+        return $this->apiCall(self::GET, $url);
+    }
+
+    /**
+     * Get all code revisions
+     *
+     * @param String $code_id.
+     * @param int $page Page. Default is 0, maximum is 100.
+     * @param int $per_page The number of tasks to return per page. Default is 30, maximum is 100.
+     *
+     * @throws InvalidArgumentException
+     * @return array of revisions
+     */
+    public function getCodeRevisions($code_id, $page = 0, $per_page = 30)
+    {
+        if (empty($code_id)) {
+            throw new InvalidArgumentException("Please set code_id");
+        }
+        $params = array(
+            'page'     => $page,
+            'per_page' => $per_page
+        );
+        $this->setJsonHeaders();
+        $url = "projects/{$this->project_id}/codes/$code_id/revisions";
+        $res = json_decode($this->apiCall(self::GET, $url, $params));
+        return $res->revisions;
+    }
+
     public function deleteCode($code_id)
     {
         $url = "projects/{$this->project_id}/codes/$code_id";
@@ -505,6 +547,27 @@ class IronWorker extends IronCore
         $this->setCommonHeaders();
         $res = $this->apiCall(self::POST, $url, $request);
         return self::json_decode($res);
+    }
+
+    /**
+     * Retry task.
+     *
+     * @param string $task_id Task ID
+     * @param int $delay The number of seconds the task should be delayed before it runs again.
+     * @return string Retried Task ID
+     * @throws InvalidArgumentException
+     */
+    public function retryTask($task_id, $delay = 1)
+    {
+        if (empty($task_id)) {
+            throw new InvalidArgumentException("Please set task_id");
+        }
+        $url = "projects/{$this->project_id}/tasks/$task_id/retry";
+        $request = array('delay' => $delay);
+
+        $this->setCommonHeaders();
+        $res = json_decode($this->apiCall(self::POST, $url, $request));
+        return $res->tasks[0]->id;
     }
 
     /**
