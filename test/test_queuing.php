@@ -71,6 +71,14 @@ class TestQueueing extends IronUnitTestCase
         $this->assertEqual($res->msg, 'Cancelled');
     }
 
+    public function testRetryTask()
+    {
+        $task_id = $this->worker->postTask('TestWorker');
+        $retry_id = $this->worker->retryTask($task_id, 10);
+        $taskDetails = $this->worker->getTaskDetails($retry_id);
+        $this->assertEqual($task_id, $taskDetails->original_task_id);
+    }
+
     public function testPostTaskOptions()
     {
         $task_id = $this->worker->postTask('TestWorker', array(), array(
