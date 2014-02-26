@@ -127,17 +127,6 @@ $start_at = time() + 3*60;
 $worker->postScheduleAdvanced('HelloWorld', array(), $start_at, 2*60, null, 10);
 ```
 
-## Setting Task Priority
-
-You can specify priority of the task by setting the corresponding parameter.
-
-```php
-# Run task with medium priority
-$worker->postScheduleAdvanced('HelloWorld', array(), $start_at, null, null, null, 1);
-```
-
-Value of priority parameter means the priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
-
 ## Status of a Worker
 To get the status of a worker, you can use the ```getTaskDetails()``` method.
 
@@ -205,6 +194,18 @@ echo "Hello PHP World!\n";
 print_r($args);
 
 ```
+
+## Setting Task Priority
+
+You can specify priority of the task by setting the corresponding parameter.
+
+```php
+$options = array('priority' => '1');
+# Run task with medium priority
+$worker->postTask('HelloWorld', $payload, $options);
+```
+
+Value of priority parameter means the priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
 
 ## Setting progress status
 
