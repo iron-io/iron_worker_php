@@ -195,6 +195,18 @@ print_r($args);
 
 ```
 
+## Setting Task Priority
+
+You can specify priority of the task by setting the corresponding parameter.
+
+```php
+$options = array('priority' => '1');
+# Run task with medium priority
+$worker->postTask('HelloWorld', $payload, $options);
+```
+
+Value of priority parameter means the priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
+
 ## Setting progress status
 
 To set current task progress, just call `setProgress($percent, $message)` inside your worker.
