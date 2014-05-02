@@ -36,8 +36,8 @@ For php 5.2 you should install phar manually or use second option.
 
 ```php
 <?php
-require_once "IronCore.class.php"
-require_once "IronWorker.class.php"
+require_once "IronCore.class.php";
+require_once "IronWorker.class.php";
 ```
 
 #### Using Composer
