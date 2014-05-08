@@ -794,8 +794,6 @@ class IronWorker extends IronCore
     {
         $export_env = "";
         foreach ($envs as $env => $value) {
-            $env = str_replace(" ", "", $env);
-            $value = str_replace(" ", "", $value);
             $export_env .= "putenv(\"$env=$value\");\r\n";
         }
         $header = <<<EOL
