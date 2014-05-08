@@ -275,7 +275,7 @@ class IronWorker extends IronCore
     public function postCode($filename, $zipFilename, $name, $options = array())
     {
         // Add IronWorker functions to the uploaded worker
-        $this->addRunnerToArchive($zipFilename, $filename);
+        $this->addRunnerToArchive($zipFilename, $filename, $options);
 
         $this->setPostHeaders();
         $ts = time();
@@ -787,13 +787,19 @@ class IronWorker extends IronCore
      * Contain php code that adds to worker before upload
      *
      * @param string $worker_file_name
+     * @param array $envs
      * @return string
      */
-    private function workerHeader($worker_file_name)
+    private function workerHeader($worker_file_name, $envs = array())
     {
+        $export_env = "";
+        foreach ($envs as $env => $value) {
+            $export_env .= "putenv(\"$env=$value\");\r\n";
+        }
         $header = <<<EOL
 <?php
 /*IRON_WORKER_HEADER*/
+$export_env
 function getArgs()
 {
     global \$argv;
@@ -855,7 +861,7 @@ EOL;
         return trim($header, " \n\r");
     }
 
-    private function addRunnerToArchive($archive, $worker_file_name)
+    private function addRunnerToArchive($archive, $worker_file_name, $options = array())
     {
         $zip = new ZipArchive;
         if (!$zip->open($archive, ZIPARCHIVE::CREATE) === true) {
@@ -868,7 +874,12 @@ EOL;
             throw new IronWorker_Exception("File $worker_file_name in archive $archive was not found!");
         }
 
-        if (!$zip->addFromString('runner.php', $this->workerHeader($worker_file_name))) {
+        if (is_array($options['set_env'])) {
+            $envs = $options['set_env'];
+        } else {
+            $envs = array();
+        }
+        if (!$zip->addFromString('runner.php', $this->workerHeader($worker_file_name, $envs))) {
             throw new IronWorker_Exception("Adding Runner to the worker failed");
         }
 
