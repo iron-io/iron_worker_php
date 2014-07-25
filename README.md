@@ -113,7 +113,11 @@ You can find plenty of good worker examples here: [iron_worker_examples](https:/
 <?php
 $task_id = $worker->postTask('HelloWorld');
 ```
-Worker should start in a few seconds.
+
+#### queueing parameters
+-**priority**: The priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
+-**timeout**: The maximum runtime of your task in seconds. No task can exceed 3600 seconds (60 minutes). The default is 3600 but can be set to a shorter duration.
+-**delay**: The number of seconds to delay before actually queuing the task. Default is 0.
 
 ## Scheduling a Worker
 #### postScheduleAdvanced($name, $payload, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null)
