@@ -200,7 +200,7 @@ print_r($args);
 You can specify priority of the task by setting the corresponding parameter.
 
 ```php
-$options = array('priority' => '1');
+$options = array('priority' => 1);
 # Run task with medium priority
 $worker->postTask('HelloWorld', $payload, $options);
 ```
