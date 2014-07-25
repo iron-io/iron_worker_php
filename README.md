@@ -107,13 +107,23 @@ $ iron_worker upload HelloWorld
 
 You can find plenty of good worker examples here: [iron_worker_examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
 
-## Queueing a Worker
+## Queueing a Task to a Worker
+
+### PostTask($name, $payload = array(), $options = array())
 
 ```php
 <?php
-$task_id = $worker->postTask('HelloWorld');
+$task_id = $worker->postTask('HelloWorld', $payload);
 ```
-Worker should start in a few seconds.
+
+## Queueing multiple Tasks to a Worker
+
+postTasks($name, $payloads = array(), $options = array())
+```php
+<?php
+$payloads = array($payload1, $payload2, $payload3)
+$task_id = $worker->postTasks('HelloWorld', $payloads, $options);
+```
 
 ## Scheduling a Worker
 If you want to run your code more than once or run it in regular intervals, you should schedule it:
