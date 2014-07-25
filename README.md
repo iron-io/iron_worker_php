@@ -107,26 +107,18 @@ $ iron_worker upload HelloWorld
 
 You can find plenty of good worker examples here: [iron_worker_examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
 
-## Queueing a Task to a Worker
-
-### PostTask($name, $payload = array(), $options = array())
+## Queueing a Worker
 
 ```php
 <?php
-$task_id = $worker->postTask('HelloWorld', $payload);
+$task_id = $worker->postTask('HelloWorld');
 ```
-
-## Queueing multiple Tasks to a Worker
-
-postTasks($name, $payloads = array(), $options = array())
-```php
-<?php
-$payloads = array($payload1, $payload2, $payload3)
-$task_id = $worker->postTasks('HelloWorld', $payloads, $options);
-```
+Worker should start in a few seconds.
 
 ## Scheduling a Worker
-If you want to run your code more than once or run it in regular intervals, you should schedule it:
+#### postScheduleAdvanced($name, $payload, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null)
+
+If you want to run worker tasks in specific time intervals, once at a particular time, or **n** number of things starting at a specific time you should schedule it:
 
 ```php
 <?php
@@ -134,8 +126,18 @@ If you want to run your code more than once or run it in regular intervals, you 
 $start_at = time() + 3*60;
 
 # Run task every 2 minutes, repeat 10 times
-$worker->postScheduleAdvanced('HelloWorld', array(), $start_at, 2*60, null, 10);
+
 ```
+
+#### scheduling parameters
+  - **run_every**: The amount of time, in seconds, between runs.  By default, the task will only run once. run_every will return a 400 error if it is set to less than 60.
+  - **return** a 400 error if it is set to less than 60.
+  - **end_at**: The time tasks will stop being queued. Should be a time or datetime.
+  - **run_times**: The number of times a task will run.
+  - **priority**: The priority queue to run the job in. Valid values are 0, 1, and 2. The default is 0. Higher values means 
+  - **tasks** spend less time in the queue once they come off the schedule.
+  - **start_at**: The time the scheduled task should first be run.
+
 
 ## Status of a Worker
 To get the status of a worker, you can use the ```getTaskDetails()``` method.
