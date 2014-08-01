@@ -135,7 +135,6 @@ $start_at = time() + 3*60;
 
 #### scheduling parameters
   - **run_every**: The amount of time, in seconds, between runs.  By default, the task will only run once. run_every will return a 400 error if it is set to less than 60.
-  - **return** a 400 error if it is set to less than 60.
   - **end_at**: The time tasks will stop being queued. Should be a time or datetime.
   - **run_times**: The number of times a task will run.
   - **priority**: The priority queue to run the job in. Valid values are 0, 1, and 2. The default is 0. Higher values means 
