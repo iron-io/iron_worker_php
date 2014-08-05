@@ -60,7 +60,7 @@ class IronUnitTestCase extends UnitTestCase
 
 class AllTests extends TestSuite
 {
-    public function runAllTests()
+    public function allTests()
     {
         $this->TestSuite('All tests');
         $this->addFile('test_uploading.php');

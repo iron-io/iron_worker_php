@@ -874,7 +874,7 @@ EOL;
             throw new IronWorker_Exception("File $worker_file_name in archive $archive was not found!");
         }
 
-        if (is_array($options['set_env'])) {
+        if (!empty($options['set_env']) && is_array($options['set_env'])) {
             $envs = $options['set_env'];
         } else {
             $envs = array();

@@ -33,7 +33,7 @@ class TestUploading extends IronUnitTestCase
     {
         IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true);
         $res = $this->worker->postCode('worker.php', '_worker.zip', 'TestWorker');
-        $this->assertEqual($res->msg, 'Upload successful.');
+        $this->assertTrue(!empty($res->id));
     }
 
     public function testGetCodesList()
