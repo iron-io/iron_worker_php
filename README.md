@@ -111,13 +111,17 @@ You can find plenty of good worker examples here: [iron_worker_examples](https:/
 
 ```php
 <?php
-$task_id = $worker->postTask('HelloWorld');
+$payload = array()
+$options = array('label' => 'label_name', 'cluster' => 'dedicated')
+$task_id = $worker->postTask('HelloWorld', $payload, $options);
 ```
 
-#### queueing parameters
--**priority**: The priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
--**timeout**: The maximum runtime of your task in seconds. No task can exceed 3600 seconds (60 minutes). The default is 3600 but can be set to a shorter duration.
--**delay**: The number of seconds to delay before actually queuing the task. Default is 0.
+#### queueing options
+  - **priority**: The priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
+  - **timeout**: The maximum runtime of your task in seconds. No task can exceed 3600 seconds (60 minutes). The default is 3600 but can be set to a shorter duration.
+  - **delay**: The number of seconds to delay before actually queuing the task. Default is 0.
+  - **label**: Optional text label for your task. 
+  - **cluster**: cluster name ex: "high-mem" or "dedicated".  This is a premium feature for customers to have access to more powerful or custom built worker solutions. Dedicated worker clusters exist for users who want to reserve a set number of workers just for their queued tasks. If not set default is set to  "default" which is the public IronWorker cluster.
 
 ## Scheduling a Worker
 #### postScheduleAdvanced($name, $payload, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null)
@@ -126,21 +130,19 @@ If you want to run worker tasks in specific time intervals, once at a particular
 
 ```php
 <?php
-# 3 minutes from now
-$start_at = time() + 3*60;
-
-# Run task every 2 minutes, repeat 10 times
-
+$options = array('label' => 'label_name', 'cluster' => 'default');
+$task_id = $worker->postSchedule('HelloWorkerRuby', $options);
 ```
 
-#### scheduling parameters
+#### scheduling options
   - **run_every**: The amount of time, in seconds, between runs.  By default, the task will only run once. run_every will return a 400 error if it is set to less than 60.
   - **end_at**: The time tasks will stop being queued. Should be a time or datetime.
   - **run_times**: The number of times a task will run.
   - **priority**: The priority queue to run the job in. Valid values are 0, 1, and 2. The default is 0. Higher values means 
   - **tasks** spend less time in the queue once they come off the schedule.
   - **start_at**: The time the scheduled task should first be run.
-
+  - **label**: Optional label for adding custom labels to scheduled tasks.
+  - **cluster**: cluster name ex: "high-mem" or "dedicated". If not set default is set to "default" which is the public IronWorker cluster.
 
 ## Status of a Worker
 To get the status of a worker, you can use the ```getTaskDetails()``` method.
