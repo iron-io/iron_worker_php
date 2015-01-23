@@ -837,7 +837,7 @@ function getArgs(\$assoc = true)
     return \$args;
 }
 
-function getPayload(\$assoc = true)
+function getPayload(\$assoc = false)
 {
     \$args = getArgs(\$assoc);
 
