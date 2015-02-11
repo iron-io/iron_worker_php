@@ -426,7 +426,7 @@ class IronWorker extends IronCore
      * @param int           $priority   Priority queue to run the job in (0, 1, 2). p0 is default.
      * @return string Created Schedule id
      */
-    public function postScheduleAdvanced($name, $payload, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null)
+    public function postScheduleAdvanced($name, $payload, $start_at, $label = null, $run_every = null, $end_at = null, $run_times = null, $priority = null)
     {
         $options = array();
         $options['start_at'] = self::dateRfc3339($start_at);
@@ -441,6 +441,9 @@ class IronWorker extends IronCore
         }
         if (!empty($priority)) {
             $options['priority']  = $priority;
+        }
+	if (!empty($label)) {
+            $options['label']  = $label;
         }
         return $this->postSchedule($name, $options, $payload);
     }
