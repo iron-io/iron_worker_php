@@ -124,7 +124,7 @@ $task_id = $worker->postTask('HelloWorld', $payload, $options);
   - **cluster**: cluster name ex: "high-mem" or "dedicated".  This is a premium feature for customers to have access to more powerful or custom built worker solutions. Dedicated worker clusters exist for users who want to reserve a set number of workers just for their queued tasks. If not set default is set to  "default" which is the public IronWorker cluster.
 
 ## Scheduling a Worker
-#### postScheduleAdvanced($name, $payload, $start_at, $run_every = null, $end_at = null, $run_times = null, $priority = null)
+#### postScheduleAdvanced($name, $payload, $start_at, $label = null, $run_every = null, $end_at = null, $run_times = null, $priority = null, $cluster = null)
 
 If you want to run worker tasks in specific time intervals, once at a particular time, or **n** number of things starting at a specific time you should schedule it:
 
