@@ -6,7 +6,7 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.4.3
+ * @version 1.4.4
  * @package IronWorkerPHP
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
@@ -24,7 +24,7 @@ class IronWorker_Exception extends Exception
  */
 class IronWorker extends IronCore
 {
-    protected $client_version = '1.4.3';
+    protected $client_version = '1.4.4';
     protected $client_name    = 'iron_worker_php';
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -444,7 +444,7 @@ class IronWorker extends IronCore
         }
         if (!empty($priority)) {
             $options['priority']  = $priority;
-        }	
+        }
 	if (!empty($cluster)) {
             $options['cluster']  = $cluster;
         }
