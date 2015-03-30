@@ -22,7 +22,7 @@ class IronWorker_Exception extends Exception
 /**
  * Class that wraps IronWorker API calls.
  */
-class IronWorker extends IronCore
+class IronWorker extends IronCore\IronCore
 {
     protected $client_version = '1.4.4';
     protected $client_name    = 'iron_worker_php';
