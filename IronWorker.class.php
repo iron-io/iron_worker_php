@@ -297,7 +297,7 @@ class IronWorker extends IronCore
         $url = "projects/{$this->project_id}/codes";
         $post = array(
             "data" => json_encode($sendingData),
-            "file"=>"@".$zipFilename,
+            "file"=> new CURLFile($zipFilename),
         );
         $response = $this->apiCall(self::POST, $url, array(), $post);
         return self::json_decode($response);
