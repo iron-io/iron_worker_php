@@ -818,28 +818,36 @@ function getArgs(\$assoc = true)
         }
 
         if (\$v == '-id') \$args['task_id'] = \$argv[\$k + 1];
-        if (\$v == '-d') \$args['dir'] = \$argv[\$k + 1];
-
-        if (\$v == '-payload' && file_exists(\$argv[\$k + 1])) {
-            \$args['payload'] = file_get_contents(\$argv[\$k + 1]);
-
-            \$parsed_payload = json_decode(\$args['payload'], \$assoc);
-
-            if (\$parsed_payload != null) {
-                \$args['payload'] = \$parsed_payload;
-            }
-        }
-
-        if (\$v == '-config' && file_exists(\$argv[\$k + 1])) {
-            \$args['config'] = file_get_contents(\$argv[\$k + 1]);
-
-            \$parsed_config = json_decode(\$args['config'], \$assoc);
-
-            if (\$parsed_config != null) {
-                \$args['config'] = \$parsed_config;
-            }
-        }
+        if (\$v == '-d') \$args['dir'] = \$argv[\$k + 1];		
+		if (\$v == '-payload') \$args['payload_file'] = \$argv[\$k + 1];
+		if (\$v == '-config') \$args['config_file'] = \$argv[\$k + 1];        
     }
+
+    if (getenv('TASK_ID')) \$args['task_id'] = getenv('TASK_ID');
+	if (getenv('TASK_DIR')) \$args['dir'] = getenv('TASK_DIR');
+	if (getenv('PAYLOAD_FILE')) \$args['payload_file'] = getenv('PAYLOAD_FILE');
+	if (getenv('CONFIG_FILE')) \$args['config_file'] = getenv('CONFIG_FILE');
+		
+	if(array_key_exists('payload_file',\$args)){
+		\$args['payload'] = file_get_contents(\$args['payload_file']);
+
+        \$parsed_payload = json_decode(\$args['payload'], \$assoc);
+
+        if (\$parsed_payload != null) {
+            \$args['payload'] = \$parsed_payload;
+        }
+	}
+		
+	if(array_key_exists('config_file',\$args)){
+		\$args['config'] = file_get_contents(\$args['config_file']);
+
+        \$parsed_config = json_decode(\$args['config'], \$assoc);
+
+        if (\$parsed_config != null) {
+            \$args['config'] = \$parsed_config;
+        }
+	}
+		
     return \$args;
 }
 
