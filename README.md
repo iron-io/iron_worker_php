@@ -1,7 +1,7 @@
 iron_worker_php is PHP language binding for IronWorker.
 
 IronWorker is a massively scalable background processing system.
-[See How It Works](http://www.iron.io/products/worker/how)
+[See How It Works](http://www.iron.io/worker/how-it-works)
 
 # Getting Started
 
