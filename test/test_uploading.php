@@ -5,7 +5,7 @@ class TestUploading extends IronUnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->worker = new IronWorker('_config.json');
+        $this->worker = new IronWorker\IronWorker('_config.json');
         $this->worker->ssl_verifypeer = false;
     }
 
@@ -22,16 +22,16 @@ class TestUploading extends IronUnitTestCase
     public function testZipCreation()
     {
         $this->assertTrue(
-            IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true)
+            IronWorker\IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true)
         );
         $this->assertFalse(
-            IronWorker::createZip($this->workerDir(), array('not_exist.php'), '_worker.zip', true)
+            IronWorker\IronWorker::createZip($this->workerDir(), array('not_exist.php'), '_worker.zip', true)
         );
     }
 
     public function testZipUploading()
     {
-        IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true);
+        IronWorker\IronWorker::createZip($this->workerDir(), array('worker.php'), '_worker.zip', true);
         $res = $this->worker->postCode('worker.php', '_worker.zip', 'TestWorker');
         $this->assertTrue(!empty($res->id));
     }

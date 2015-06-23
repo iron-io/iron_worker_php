@@ -5,7 +5,7 @@ class TestScheduling extends IronUnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->worker = new IronWorker('_config.json');
+        $this->worker = new IronWorker\IronWorker('_config.json');
         $this->worker->ssl_verifypeer = false;
         $this->worker->upload($this->workerDir(), 'worker.php', 'TestWorker');
     }
@@ -17,14 +17,14 @@ class TestScheduling extends IronUnitTestCase
 
     public function postScheduleAdvanced()
     {
-        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time(), 60, null, 2);
+        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time(), "foo", 60, null, 2);
         $this->assertTrue(is_string($schedule_id));
     }
 
 
     public function testGetSchedules()
     {
-        $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 2);
+        $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 2);
         $schedules = $this->worker->getSchedules();
         $this->assertTrue(is_array($schedules));
         $this->assertTrue(strlen($schedules[0]->id) > 0);
@@ -33,7 +33,7 @@ class TestScheduling extends IronUnitTestCase
 
     public function testGetSchedule()
     {
-        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 1);
+        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 1);
         $schedule    = $this->worker->getSchedule($schedule_id);
         $this->assertEqual($schedule->code_name, 'TestWorker');
         $this->assertEqual($schedule->status, 'scheduled');
@@ -42,7 +42,7 @@ class TestScheduling extends IronUnitTestCase
 
     public function testDeleteSchedule()
     {
-        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, 60, null, 1);
+        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 1);
         $res = $this->worker->deleteSchedule($schedule_id);
         $this->assertEqual($res->msg, 'Cancelled');
     }

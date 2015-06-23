@@ -11,3 +11,8 @@ tmp/
 .idea/
 config.ini
 /__*
+test/_config.ini
+test/_config.json
+iron.json
+vendor/
+composer.lock

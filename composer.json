@@ -15,10 +15,12 @@
     ],
     "require": {
         "php": ">=5.2.0",
-        "iron-io/iron_core": "0.*"
+        "iron-io/iron_core": "1.*"
     },
     "autoload": {
-        "files": ["IronWorker.class.php"]
+        "psr-4": {
+            "IronWorker\\": "src/"
+        }
     },
     "repositories":[
         {

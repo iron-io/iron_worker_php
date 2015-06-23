@@ -5,6 +5,10 @@ IronWorker is a massively scalable background processing system.
 
 # Getting Started
 
+## Branches
+* `1.*` - Laravel 4.0/4.1/4.2/5.0 compatible, PHP 5.2 compatible version. No namespaces.
+* `2.*` - Laravel 5.1+ compatible, PSR-4 compatible version with namespaces.
+* `master` branch - same as `2.*`
 
 ## Get credentials
 To start using iron_worker_php, you need to sign up and get an oauth token.
@@ -16,35 +20,44 @@ To start using iron_worker_php, you need to sign up and get an oauth token.
 
 There are two ways to use iron_worker_php:
 
-#### Using precompiled phar archive:
+##### Using composer
 
-Copy `iron_worker.phar` to target directory and include it:
+Create `composer.json` file in project directory:
 
-```php
-<?php
-require_once "phar://iron_worker.phar";
+```json
+{
+    "require": {
+        "iron-io/iron_worker": "2.*"
+    }
+}
 ```
 
-Please note, [phar](http://php.net/manual/en/book.phar.php) extension available by default only from php 5.3.0
-For php 5.2 you should install phar manually or use second option.
+Do `composer install` (install it if needed: https://getcomposer.org/download/)
 
-#### Using classes directly
-
-1. Copy `IronWorker.class.php` to target directory
-2. Grab `IronCore.class.php` [there](https://github.com/iron-io/iron_core_php) and copy to target directory
-3. Include both of them:
+And use it:
 
 ```php
-<?php
-require_once "IronCore.class.php";
-require_once "IronWorker.class.php";
+require __DIR__ . '/vendor/autoload.php';
+
+$worker = new \IronWorker\IronWorker();
 ```
 
-#### Using Composer
 
-Follow instructions at https://packagist.org/
+##### Using classes directly (strongly not recommended)
 
-[iron_worker package](https://packagist.org/packages/iron-io/iron_worker)
+1. Copy classes from `src` to target directory
+2. Grab IronCore classes [there](https://github.com/iron-io/iron_core_php) and copy to target directory
+3. Include them all.
+
+```php
+require 'src/HttpException.php';
+require 'src/JsonException.php';
+require 'src/IronCore.php';
+require 'src/IronWorker.php';
+require 'src/IronWorkerException.php';
+
+$worker = new \IronWorker\IronWorker();
+```
 
 ## Configure
 Three ways to configure IronWorker:
@@ -53,7 +66,7 @@ Three ways to configure IronWorker:
 
 ```php
 <?php
-$worker = new IronWorker(array(
+$worker = new \IronWorker\IronWorker(array(
     'token' => 'XXXXXXXXX',
     'project_id' => 'XXXXXXXXX'
 ));
@@ -62,7 +75,7 @@ $worker = new IronWorker(array(
 
 ```php
 <?php
-$worker = new IronWorker('config.ini');
+$worker = new \IronWorker\IronWorker('iron.json');
 ```
 
 * Automatic config search - pass zero arguments to constructor and library will try to find config file in following locations:
@@ -120,7 +133,7 @@ $task_id = $worker->postTask('HelloWorld', $payload, $options);
   - **priority**: The priority queue to run the task in. Valid values are 0, 1, and 2. 0 is the default.
   - **timeout**: The maximum runtime of your task in seconds. No task can exceed 3600 seconds (60 minutes). The default is 3600 but can be set to a shorter duration.
   - **delay**: The number of seconds to delay before actually queuing the task. Default is 0.
-  - **label**: Optional text label for your task. 
+  - **label**: Optional text label for your task.
   - **cluster**: cluster name ex: "high-mem" or "dedicated".  This is a premium feature for customers to have access to more powerful or custom built worker solutions. Dedicated worker clusters exist for users who want to reserve a set number of workers just for their queued tasks. If not set default is set to  "default" which is the public IronWorker cluster.
 
 ## Scheduling a Worker
@@ -138,7 +151,7 @@ $task_id = $worker->postSchedule('HelloWorkerRuby', $options);
   - **run_every**: The amount of time, in seconds, between runs.  By default, the task will only run once. run_every will return a 400 error if it is set to less than 60.
   - **end_at**: The time tasks will stop being queued. Should be a time or datetime.
   - **run_times**: The number of times a task will run.
-  - **priority**: The priority queue to run the job in. Valid values are 0, 1, and 2. The default is 0. Higher values means 
+  - **priority**: The priority queue to run the job in. Valid values are 0, 1, and 2. The default is 0. Higher values means
   - **tasks** spend less time in the queue once they come off the schedule.
   - **start_at**: The time the scheduled task should first be run.
   - **label**: Optional label for adding custom labels to scheduled tasks.

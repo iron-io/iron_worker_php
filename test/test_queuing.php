@@ -5,7 +5,7 @@ class TestQueueing extends IronUnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->worker = new IronWorker('_config.json');
+        $this->worker = new IronWorker\IronWorker('_config.json');
         $this->worker->ssl_verifypeer = false;
         $this->worker->upload($this->workerDir(), 'worker.php', 'TestWorker');
     }

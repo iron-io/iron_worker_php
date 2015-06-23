@@ -1,4 +1,9 @@
 <?php
+
+namespace IronWorker;
+
+use IronCore\IronCore;
+
 /**
  * PHP client for IronWorker
  * IronWorker is a massively scalable background processing system.
@@ -6,25 +11,13 @@
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 1.4.4
- * @package IronWorkerPHP
+ * @version 2.0.0
+ * @package IronWorker
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
- */
-
-/**
- * IronWorker internal exceptions representation
- */
-class IronWorker_Exception extends Exception
-{
-
-}
-
-/**
- * Class that wraps IronWorker API calls.
  */
 class IronWorker extends IronCore
 {
-    protected $client_version = '1.4.4';
+    protected $client_version = '2.0.0';
     protected $client_name    = 'iron_worker_php';
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
@@ -86,13 +79,15 @@ class IronWorker extends IronCore
     public function upload($directory, $run_filename, $code_name, $options = array())
     {
         $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
-        if (!self::zipDirectory($directory, $temp_file, true)) {
+        if (!self::zipDirectory($directory, $temp_file, true))
+        {
             unlink($temp_file);
             return false;
         }
         try {
             $this->postCode($run_filename, $temp_file, $code_name, $options);
-        } catch (Exception $e) {
+        } catch (Exception $e)
+        {
             unlink($temp_file);
             throw $e;
         }
@@ -118,30 +113,38 @@ class IronWorker extends IronCore
     public static function createZip($base_dir, $files, $destination, $overwrite = false)
     {
         //if the zip file already exists and overwrite is false, return false
-        if (file_exists($destination) && !$overwrite) {
+        if (file_exists($destination) && !$overwrite)
+        {
             return false;
         }
-        if (!empty($base_dir)) {
+        if (!empty($base_dir))
+        {
             $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         }
         //vars
         $valid_files = array();
         //if files were passed in...
-        if (is_array($files)) {
+        if (is_array($files))
+        {
             //cycle through each file
-            foreach ($files as $file) {
+            foreach ($files as $file)
+            {
                 //make sure the file exists
-                if (file_exists($base_dir.$file)) {
+                if (file_exists($base_dir.$file))
+                {
                     $valid_files[] = $file;
                 }
             }
         }
-        if (count($valid_files)) {
-            $zip = new ZipArchive();
-            if ($zip->open($destination, $overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+        if (count($valid_files))
+        {
+            $zip = new \ZipArchive();
+            if ($zip->open($destination, $overwrite ? \ZIPARCHIVE::OVERWRITE : \ZIPARCHIVE::CREATE) !== true)
+            {
                 return false;
             }
-            foreach ($valid_files as $file) {
+            foreach ($valid_files as $file)
+            {
                 $zip->addFile($base_dir.$file, $file);
             }
             $zip->close();
@@ -167,14 +170,16 @@ class IronWorker extends IronCore
      */
     public static function zipDirectory($directory, $destination, $overwrite = false)
     {
-        if (!file_exists($directory) || !is_dir($directory)) {
+        if (!file_exists($directory) || !is_dir($directory))
+        {
             return false;
         }
         $directory = rtrim($directory, DIRECTORY_SEPARATOR);
 
         $files = self::fileNamesRecursive($directory);
 
-        if (empty($files)) {
+        if (empty($files))
+        {
             return false;
         }
 
@@ -183,10 +188,12 @@ class IronWorker extends IronCore
 
     public function setProjectId($project_id)
     {
-        if (!empty($project_id)) {
+        if (!empty($project_id))
+        {
             $this->project_id = $project_id;
         }
-        if (empty($this->project_id)) {
+        if (empty($this->project_id))
+        {
             throw new InvalidArgumentException("Please set project_id");
         }
     }
@@ -248,7 +255,8 @@ class IronWorker extends IronCore
 
     public function getCodeDetails($code_id)
     {
-        if (empty($code_id)) {
+        if (empty($code_id))
+        {
             throw new InvalidArgumentException("Please set code_id");
         }
         $this->setJsonHeaders();
@@ -313,7 +321,8 @@ class IronWorker extends IronCore
      */
     public function downloadCode($code_id)
     {
-        if (empty($code_id)) {
+        if (empty($code_id))
+        {
             throw new InvalidArgumentException("Please set code_id");
         }
         $url = "projects/{$this->project_id}/codes/$code_id/download";
@@ -332,7 +341,8 @@ class IronWorker extends IronCore
      */
     public function getCodeRevisions($code_id, $page = 0, $per_page = 30)
     {
-        if (empty($code_id)) {
+        if (empty($code_id))
+        {
             throw new InvalidArgumentException("Please set code_id");
         }
         $params = array(
@@ -390,7 +400,8 @@ class IronWorker extends IronCore
      */
     public function getSchedule($schedule_id)
     {
-        if (empty($schedule_id)) {
+        if (empty($schedule_id))
+        {
             throw new InvalidArgumentException("Please set schedule_id");
         }
         $this->setJsonHeaders();
@@ -419,33 +430,41 @@ class IronWorker extends IronCore
      * @param array         $payload    Payload for task
      * @param int|DateTime  $start_at   Time of first run in unix timestamp format or as DateTime instance.
      *                                  Example: time()+2*60
+     * @param string        $label      Label the schedule
      * @param int           $run_every  Time in seconds between runs. If omitted, task will only run once.
      * @param int|DateTime  $end_at     Time tasks will stop being enqueued in unix timestamp,
      *                                  or as DateTime instance format.
      * @param int           $run_times  Number of times to run task.
      * @param int           $priority   Priority queue to run the job in (0, 1, 2). p0 is default.
+     * @param string        $cluster    Cluster
      * @return string Created Schedule id
      */
     public function postScheduleAdvanced($name, $payload, $start_at, $label = null, $run_every = null, $end_at = null, $run_times = null, $priority = null, $cluster = null)
     {
         $options = array();
         $options['start_at'] = self::dateRfc3339($start_at);
-	if (!empty($label)) {
+        if (!empty($label))
+        {
             $options['label']  = $label;
         }
-        if (!empty($run_every)) {
+        if (!empty($run_every))
+        {
             $options['run_every'] = $run_every;
         }
-        if (!empty($end_at)) {
+        if (!empty($end_at))
+        {
             $options['end_at']    = self::dateRfc3339($end_at);
         }
-        if (!empty($run_times)) {
+        if (!empty($run_times))
+        {
             $options['run_times'] = $run_times;
         }
-        if (!empty($priority)) {
+        if (!empty($priority))
+        {
             $options['priority']  = $priority;
         }
-	if (!empty($cluster)) {
+        if (!empty($cluster))
+        {
             $options['cluster']  = $cluster;
         }
         return $this->postSchedule($name, $options, $payload);
@@ -486,8 +505,8 @@ class IronWorker extends IronCore
             'tasks' => array()
         );
 
-        foreach ($payloads as $payload) {
-
+        foreach ($payloads as $payload)
+        {
             $task_data = array(
                 "name"      => $name,
                 "code_name" => $name,
@@ -495,7 +514,8 @@ class IronWorker extends IronCore
 
             );
 
-            foreach ($options as $k => $v) {
+            foreach ($options as $k => $v)
+            {
                 $task_data[$k] = $v;
             }
 
@@ -507,7 +527,8 @@ class IronWorker extends IronCore
         $tasks = self::json_decode($res);
 
         $ids = array();
-        foreach ($tasks->tasks as $task) {
+        foreach ($tasks->tasks as $task)
+        {
             $ids[] = $task->id;
         }
         return $ids;
@@ -515,7 +536,8 @@ class IronWorker extends IronCore
 
     public function getLog($task_id)
     {
-        if (empty($task_id)) {
+        if (empty($task_id))
+        {
             throw new InvalidArgumentException("Please set task_id");
         }
         $this->setJsonHeaders();
@@ -527,7 +549,8 @@ class IronWorker extends IronCore
 
     public function getTaskDetails($task_id)
     {
-        if (empty($task_id)) {
+        if (empty($task_id))
+        {
             throw new InvalidArgumentException("Please set task_id");
         }
         $this->setJsonHeaders();
@@ -544,7 +567,8 @@ class IronWorker extends IronCore
      */
     public function cancelTask($task_id)
     {
-        if (empty($task_id)) {
+        if (empty($task_id))
+        {
             throw new InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
@@ -565,7 +589,8 @@ class IronWorker extends IronCore
      */
     public function retryTask($task_id, $delay = 1)
     {
-        if (empty($task_id)) {
+        if (empty($task_id))
+        {
             throw new InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/retry";
@@ -598,15 +623,19 @@ class IronWorker extends IronCore
      */
     public function waitFor($task_id, $sleep = 5, $max_wait_time = 0)
     {
-        while (1) {
+        while (1)
+        {
             $details = $this->getTaskDetails($task_id);
 
-            if ($details->status != 'queued' && $details->status != 'running') {
+            if ($details->status != 'queued' && $details->status != 'running')
+            {
                 return $details;
             }
-            if ($max_wait_time > 0) {
+            if ($max_wait_time > 0)
+            {
                 $max_wait_time -= $sleep;
-                if ($max_wait_time <= 0) {
+                if ($max_wait_time <= 0)
+                {
                     return false;
                 }
             }
@@ -675,7 +704,8 @@ class IronWorker extends IronCore
      */
     public function setProgress($task_id, $percent, $msg = '')
     {
-        if (empty($task_id)) {
+        if (empty($task_id))
+        {
             throw new InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/progress";
@@ -719,7 +749,8 @@ class IronWorker extends IronCore
      */
     public function setCurrentTaskProgress($percent, $msg = '')
     {
-        if (!function_exists('getArgs')) {
+        if (!function_exists('getArgs'))
+        {
             throw new RuntimeException("Method can be used only inside a worker");
         }
         $args = getArgs();
@@ -732,11 +763,13 @@ class IronWorker extends IronCore
 
     private function runtimeFileType($name)
     {
-        if (empty($name)) {
+        if (empty($name))
+        {
             return false;
         }
         $explodedName= explode(".", $name);
-        switch ($explodedName[(count($explodedName)-1)]) {
+        switch ($explodedName[(count($explodedName)-1)])
+        {
             case "php":
                 return "php";
             case "rb":
@@ -772,14 +805,18 @@ class IronWorker extends IronCore
         $files = scandir($dir);
         $names = array();
 
-        foreach ($files as $name) {
-            if ($name == '.' || $name == '..' || $name == '.svn') {
+        foreach ($files as $name)
+        {
+            if ($name == '.' || $name == '..' || $name == '.svn' || $name == '.git')
+            {
                 continue;
             }
 
-            if (is_dir($dir.$name)) {
+            if (is_dir($dir.$name))
+            {
                 $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/');
-                foreach ($inner_names as $iname) {
+                foreach ($inner_names as $iname)
+                {
                     $names[] = $iname;
                 }
             } else {
@@ -799,7 +836,8 @@ class IronWorker extends IronCore
     private function workerHeader($worker_file_name, $envs = array())
     {
         $export_env = "";
-        foreach ($envs as $env => $value) {
+        foreach ($envs as $env => $value)
+        {
             $export_env .= "putenv(\"$env=$value\");\r\n";
         }
         $header = <<<EOL
@@ -812,42 +850,48 @@ function getArgs(\$assoc = true)
 
     \$args = array('task_id' => null, 'dir' => null, 'payload' => array(), 'config' => null);
 
-    foreach (\$argv as \$k => \$v) {
-        if (empty(\$argv[\$k + 1])) {
+    foreach (\$argv as \$k => \$v)
+    {
+        if (empty(\$argv[\$k + 1]))
+        {
             continue;
         }
 
         if (\$v == '-id') \$args['task_id'] = \$argv[\$k + 1];
         if (\$v == '-d') \$args['dir'] = \$argv[\$k + 1];
         if (\$v == '-payload') \$args['payload_file'] = \$argv[\$k + 1];
-        if (\$v == '-config') \$args['config_file'] = \$argv[\$k + 1];        
+        if (\$v == '-config') \$args['config_file'] = \$argv[\$k + 1];
     }
 
     if (getenv('TASK_ID')) \$args['task_id'] = getenv('TASK_ID');
     if (getenv('TASK_DIR')) \$args['dir'] = getenv('TASK_DIR');
     if (getenv('PAYLOAD_FILE')) \$args['payload_file'] = getenv('PAYLOAD_FILE');
     if (getenv('CONFIG_FILE')) \$args['config_file'] = getenv('CONFIG_FILE');
-		
-    if(array_key_exists('payload_file',\$args) && file_exists(\$args['payload_file'])){
+
+    if (array_key_exists('payload_file',\$args) && file_exists(\$args['payload_file']))
+    {
         \$args['payload'] = file_get_contents(\$args['payload_file']);
 
         \$parsed_payload = json_decode(\$args['payload'], \$assoc);
 
-        if (\$parsed_payload != null) {
+        if (\$parsed_payload != null)
+        {
             \$args['payload'] = \$parsed_payload;
         }
     }
-		
-    if(array_key_exists('config_file',\$args) && file_exists(\$args['config_file'])){
+
+    if (array_key_exists('config_file',\$args) && file_exists(\$args['config_file']))
+    {
         \$args['config'] = file_get_contents(\$args['config_file']);
 
         \$parsed_config = json_decode(\$args['config'], \$assoc);
 
-        if (\$parsed_config != null) {
+        if (\$parsed_config != null)
+        {
             \$args['config'] = \$parsed_config;
         }
     }
-		
+
     return \$args;
 }
 
@@ -877,24 +921,28 @@ EOL;
 
     private function addRunnerToArchive($archive, $worker_file_name, $options = array())
     {
-        $zip = new ZipArchive;
-        if (!$zip->open($archive, ZIPARCHIVE::CREATE) === true) {
+        $zip = new \ZipArchive;
+        if (!$zip->open($archive, \ZIPARCHIVE::CREATE) === true)
+        {
             $zip->close();
-            throw new IronWorker_Exception("Archive $archive was not found!");
+            throw new IronWorkerException("Archive $archive was not found!");
         }
 
-        if ($zip->statName($worker_file_name) === false) {
+        if ($zip->statName($worker_file_name) === false)
+        {
             $zip->close();
-            throw new IronWorker_Exception("File $worker_file_name in archive $archive was not found!");
+            throw new IronWorkerException("File $worker_file_name in archive $archive was not found!");
         }
 
-        if (!empty($options['set_env']) && is_array($options['set_env'])) {
+        if (!empty($options['set_env']) && is_array($options['set_env']))
+        {
             $envs = $options['set_env'];
         } else {
             $envs = array();
         }
-        if (!$zip->addFromString('runner.php', $this->workerHeader($worker_file_name, $envs))) {
-            throw new IronWorker_Exception("Adding Runner to the worker failed");
+        if (!$zip->addFromString('runner.php', $this->workerHeader($worker_file_name, $envs)))
+        {
+            throw new IronWorkerException("Adding Runner to the worker failed");
         }
 
         $zip->close();

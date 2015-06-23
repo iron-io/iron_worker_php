@@ -3,8 +3,13 @@
 require_once '../../tools/simpletest/unit_tester.php';
 require_once '../../tools/simpletest/reporter.php';
 require_once '../../tools/simpletest/autorun.php';
-require_once '../../iron_core_php/IronCore.class.php';
-require_once '../IronWorker.class.php';
+
+require_once '../../iron_core_php/src/IronCore.php';
+require_once '../../iron_core_php/src/HttpException.php';
+require_once '../../iron_core_php/src/JsonException.php';
+
+require_once '../src/IronWorker.php';
+require_once '../src/IronWorkerException.php';
 
 class IronUnitTestCase extends UnitTestCase
 {
@@ -12,8 +17,7 @@ class IronUnitTestCase extends UnitTestCase
 
     public function setUp()
     {
-        $ini_config = parse_ini_file('../config.ini', true);
-        $config = $ini_config['iron_worker'];
+        $config = json_decode(file_get_contents('../iron.json'), true);
 
         $this->writeJsonFile(array('iron_worker' => $config));
         $this->writeIniFile(array('iron_worker' => $config));
