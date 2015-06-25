@@ -42,23 +42,6 @@ require __DIR__ . '/vendor/autoload.php';
 $worker = new \IronWorker\IronWorker();
 ```
 
-
-##### Using classes directly (strongly not recommended)
-
-1. Copy classes from `src` to target directory
-2. Grab IronCore classes [there](https://github.com/iron-io/iron_core_php) and copy to target directory
-3. Include them all.
-
-```php
-require 'src/HttpException.php';
-require 'src/JsonException.php';
-require 'src/IronCore.php';
-require 'src/IronWorker.php';
-require 'src/IronWorkerException.php';
-
-$worker = new \IronWorker\IronWorker();
-```
-
 ## Configure
 Three ways to configure IronWorker:
 
