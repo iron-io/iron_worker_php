@@ -74,7 +74,7 @@ class IronWorker extends IronCore
      *               File location will be passed in via the -config argument.
      *               The config cannot be larger than 64KB in size.
      * @return bool Result of operation
-     * @throws Exception
+     * @throws \Exception
      */
     public function upload($directory, $run_filename, $code_name, $options = array())
     {
@@ -86,7 +86,7 @@ class IronWorker extends IronCore
         }
         try {
             $this->postCode($run_filename, $temp_file, $code_name, $options);
-        } catch (Exception $e)
+        } catch (\Exception $e)
         {
             unlink($temp_file);
             throw $e;
@@ -194,7 +194,7 @@ class IronWorker extends IronCore
         }
         if (empty($this->project_id))
         {
-            throw new InvalidArgumentException("Please set project_id");
+            throw new \InvalidArgumentException("Please set project_id");
         }
     }
 
@@ -257,7 +257,7 @@ class IronWorker extends IronCore
     {
         if (empty($code_id))
         {
-            throw new InvalidArgumentException("Please set code_id");
+            throw new \InvalidArgumentException("Please set code_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/codes/$code_id";
@@ -316,14 +316,14 @@ class IronWorker extends IronCore
      *
      * @param String $code_id.
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @return zipped file
      */
     public function downloadCode($code_id)
     {
         if (empty($code_id))
         {
-            throw new InvalidArgumentException("Please set code_id");
+            throw new \InvalidArgumentException("Please set code_id");
         }
         $url = "projects/{$this->project_id}/codes/$code_id/download";
         return $this->apiCall(self::GET, $url);
@@ -336,14 +336,14 @@ class IronWorker extends IronCore
      * @param int $page Page. Default is 0, maximum is 100.
      * @param int $per_page The number of tasks to return per page. Default is 30, maximum is 100.
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @return array of revisions
      */
     public function getCodeRevisions($code_id, $page = 0, $per_page = 30)
     {
         if (empty($code_id))
         {
-            throw new InvalidArgumentException("Please set code_id");
+            throw new \InvalidArgumentException("Please set code_id");
         }
         $params = array(
             'page'     => $page,
@@ -396,13 +396,13 @@ class IronWorker extends IronCore
      *
      * @param string $schedule_id Schedule ID
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function getSchedule($schedule_id)
     {
         if (empty($schedule_id))
         {
-            throw new InvalidArgumentException("Please set schedule_id");
+            throw new \InvalidArgumentException("Please set schedule_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/schedules/$schedule_id";
@@ -428,11 +428,11 @@ class IronWorker extends IronCore
      *
      * @param string        $name       Package name
      * @param array         $payload    Payload for task
-     * @param int|DateTime  $start_at   Time of first run in unix timestamp format or as DateTime instance.
+     * @param int|\DateTime  $start_at   Time of first run in unix timestamp format or as DateTime instance.
      *                                  Example: time()+2*60
      * @param string        $label      Label the schedule
      * @param int           $run_every  Time in seconds between runs. If omitted, task will only run once.
-     * @param int|DateTime  $end_at     Time tasks will stop being enqueued in unix timestamp,
+     * @param int|\DateTime  $end_at     Time tasks will stop being enqueued in unix timestamp,
      *                                  or as DateTime instance format.
      * @param int           $run_times  Number of times to run task.
      * @param int           $priority   Priority queue to run the job in (0, 1, 2). p0 is default.
@@ -538,7 +538,7 @@ class IronWorker extends IronCore
     {
         if (empty($task_id))
         {
-            throw new InvalidArgumentException("Please set task_id");
+            throw new \InvalidArgumentException("Please set task_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/tasks/$task_id/log";
@@ -551,7 +551,7 @@ class IronWorker extends IronCore
     {
         if (empty($task_id))
         {
-            throw new InvalidArgumentException("Please set task_id");
+            throw new \InvalidArgumentException("Please set task_id");
         }
         $this->setJsonHeaders();
         $url = "projects/{$this->project_id}/tasks/$task_id";
@@ -563,13 +563,13 @@ class IronWorker extends IronCore
      *
      * @param string $task_id Task ID
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function cancelTask($task_id)
     {
         if (empty($task_id))
         {
-            throw new InvalidArgumentException("Please set task_id");
+            throw new \InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/cancel";
         $request = array();
@@ -585,13 +585,13 @@ class IronWorker extends IronCore
      * @param string $task_id Task ID
      * @param int $delay The number of seconds the task should be delayed before it runs again.
      * @return string Retried Task ID
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function retryTask($task_id, $delay = 1)
     {
         if (empty($task_id))
         {
-            throw new InvalidArgumentException("Please set task_id");
+            throw new \InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/retry";
         $request = array('delay' => $delay);
@@ -606,7 +606,7 @@ class IronWorker extends IronCore
      *
      * @param string $task_id Task ID
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function deleteTask($task_id)
     {
@@ -700,13 +700,13 @@ class IronWorker extends IronCore
      * @param string $msg Any message or data describing the completion of the task. Must be a string value,
      *                    and the 64KB request limit applies.
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setProgress($task_id, $percent, $msg = '')
     {
         if (empty($task_id))
         {
-            throw new InvalidArgumentException("Please set task_id");
+            throw new \InvalidArgumentException("Please set task_id");
         }
         $url = "projects/{$this->project_id}/tasks/$task_id/progress";
         $request = array(
@@ -745,13 +745,13 @@ class IronWorker extends IronCore
      * @param string $msg Any message or data describing the completion of the task. Must be a string value,
      *                    and the 64KB request limit applies.
      * @return mixed
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function setCurrentTaskProgress($percent, $msg = '')
     {
         if (!function_exists('getArgs'))
         {
-            throw new RuntimeException("Method can be used only inside a worker");
+            throw new \RuntimeException("Method can be used only inside a worker");
         }
         $args = getArgs();
         $task_id = $args['task_id'];
