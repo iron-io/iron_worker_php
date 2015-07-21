@@ -317,7 +317,7 @@ class IronWorker extends IronCore
      * @param String $code_id.
      *
      * @throws \InvalidArgumentException
-     * @return zipped file
+     * @return string zipped file
      */
     public function downloadCode($code_id)
     {
