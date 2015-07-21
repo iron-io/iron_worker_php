@@ -783,11 +783,6 @@ class IronWorker extends IronCore
         }
     }
 
-    private function getFileContent($filename)
-    {
-        return file_get_contents($filename);
-    }
-
     private function setJsonHeaders()
     {
         $this->setCommonHeaders();
