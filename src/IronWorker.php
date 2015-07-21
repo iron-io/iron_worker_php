@@ -305,8 +305,13 @@ class IronWorker extends IronCore
         $url = "projects/{$this->project_id}/codes";
         $post = array(
             "data" => json_encode($sendingData),
-            "file"=>"@".$zipFilename,
         );
+        if ($this->curlEnabled() && version_compare(PHP_VERSION, '5.5.0', '>=')) {
+            $post['file'] = new \CURLFile($zipFilename);
+        }
+        else {
+            $post['file'] = '@'.$zipFilename;
+        }
         $response = $this->apiCall(self::POST, $url, array(), $post);
         return self::json_decode($response);
     }
@@ -667,14 +672,14 @@ class IronWorker extends IronCore
     {
         $url = "projects/{$this->project_id}/schedules";
         $shedule = array(
-           'name' => $name,
-           'code_name' => $name,
-           'payload' => json_encode($payload),
+            'name' => $name,
+            'code_name' => $name,
+            'payload' => json_encode($payload),
         );
         $request = array(
-           'schedules' => array(
-               array_merge($shedule, $options)
-           )
+            'schedules' => array(
+                array_merge($shedule, $options)
+            )
         );
 
         $this->setCommonHeaders();
