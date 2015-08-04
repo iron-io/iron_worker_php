@@ -76,10 +76,11 @@ class IronWorker extends IronCore
      * @return bool Result of operation
      * @throws \Exception
      */
-    public function upload($directory, $run_filename, $code_name, $options = array())
+    public function upload($directory, $run_filename, $code_name, $options = array(), $ignored = [])
     {
         $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
-        if (!self::zipDirectory($directory, $temp_file, true))
+        if(!is_array($ignored)) $ignored = [$ignored];
+        if (!self::zipDirectory($directory, $temp_file, true, $ignored))
         {
             unlink($temp_file);
             return false;
@@ -168,7 +169,7 @@ class IronWorker extends IronCore
      * @param bool $overwrite
      * @return bool
      */
-    public static function zipDirectory($directory, $destination, $overwrite = false)
+    public static function zipDirectory($directory, $destination, $overwrite = false, $ignored = [])
     {
         if (!file_exists($directory) || !is_dir($directory))
         {
@@ -176,7 +177,7 @@ class IronWorker extends IronCore
         }
         $directory = rtrim($directory, DIRECTORY_SEPARATOR);
 
-        $files = self::fileNamesRecursive($directory);
+        $files = self::fileNamesRecursive($directory, '', $ignored);
 
         if (empty($files))
         {
@@ -799,7 +800,7 @@ class IronWorker extends IronCore
         $this->headers['Content-Type'] ='multipart/form-data';
     }
 
-    private static function fileNamesRecursive($dir, $base_dir = '')
+    private static function fileNamesRecursive($dir, $base_dir = '', $ignored = [])
     {
         $dir .= DIRECTORY_SEPARATOR;
         $files = scandir($dir);
@@ -807,14 +808,14 @@ class IronWorker extends IronCore
 
         foreach ($files as $name)
         {
-            if ($name == '.' || $name == '..' || $name == '.svn' || $name == '.git')
+            if ($name == '.' || $name == '..' || $name == '.svn' || $name == '.git' || in_array($base_dir.$name, $ignored))
             {
                 continue;
             }
 
             if (is_dir($dir.$name))
             {
-                $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/');
+                $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/', $ignored);
                 foreach ($inner_names as $iname)
                 {
                     $names[] = $iname;
