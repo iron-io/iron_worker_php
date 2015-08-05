@@ -73,6 +73,7 @@ class IronWorker extends IronCore
      *               will be available in a file that your worker can access.
      *               File location will be passed in via the -config argument.
      *               The config cannot be larger than 64KB in size.
+     *  - "ignored" The list of files to be excluded from uploading process.
      * @return bool Result of operation
      * @throws \Exception
      */
@@ -165,7 +166,7 @@ class IronWorker extends IronCore
     }
 
     /**
-     * Creates a zip archive with all files and folders inside specific directory.
+     * Creates a zip archive with all files and folders inside specific directory except for the list of ignored files.
      *
      * Example:
      * <code>
@@ -176,6 +177,7 @@ class IronWorker extends IronCore
      * @param string $directory
      * @param string $destination
      * @param bool $overwrite
+     * @param array $ignored
      * @return bool
      */
     public static function zipDirectory($directory, $destination, $overwrite = false, $ignored = [])
