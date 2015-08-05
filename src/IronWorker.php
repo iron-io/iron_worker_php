@@ -76,15 +76,24 @@ class IronWorker extends IronCore
      * @return bool Result of operation
      * @throws \Exception
      */
-    public function upload($directory, $run_filename, $code_name, $options = array(), $ignored = [])
+    public function upload($directory, $run_filename, $code_name, $options = array())
     {
         $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
-        if(!is_array($ignored)) $ignored = [$ignored];
-        if (!self::zipDirectory($directory, $temp_file, true, $ignored))
+        if (array_key_exists('ignored', $options))
+        {
+            if (!is_array($options['ignored']))
+            {
+                $options['ignored'] = [$options['ignored']];
+            }
+        } else {
+            $options['ignored'] = [];
+        }
+        if (!self::zipDirectory($directory, $temp_file, true, $options['ignored']))
         {
             unlink($temp_file);
             return false;
         }
+        unset($options['ignored']);
         try {
             $this->postCode($run_filename, $temp_file, $code_name, $options);
         } catch (\Exception $e)
