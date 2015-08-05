@@ -73,17 +73,28 @@ class IronWorker extends IronCore
      *               will be available in a file that your worker can access.
      *               File location will be passed in via the -config argument.
      *               The config cannot be larger than 64KB in size.
+     *  - "ignored" The list of files to be excluded from uploading process.
      * @return bool Result of operation
      * @throws \Exception
      */
     public function upload($directory, $run_filename, $code_name, $options = array())
     {
         $temp_file = tempnam(sys_get_temp_dir(), 'iron_worker_php');
-        if (!self::zipDirectory($directory, $temp_file, true))
+        if (array_key_exists('ignored', $options))
+        {
+            if (!is_array($options['ignored']))
+            {
+                $options['ignored'] = [$options['ignored']];
+            }
+        } else {
+            $options['ignored'] = [];
+        }
+        if (!self::zipDirectory($directory, $temp_file, true, $options['ignored']))
         {
             unlink($temp_file);
             return false;
         }
+        unset($options['ignored']);
         try {
             $this->postCode($run_filename, $temp_file, $code_name, $options);
         } catch (\Exception $e)
@@ -155,7 +166,7 @@ class IronWorker extends IronCore
     }
 
     /**
-     * Creates a zip archive with all files and folders inside specific directory.
+     * Creates a zip archive with all files and folders inside specific directory except for the list of ignored files.
      *
      * Example:
      * <code>
@@ -166,9 +177,10 @@ class IronWorker extends IronCore
      * @param string $directory
      * @param string $destination
      * @param bool $overwrite
+     * @param array $ignored
      * @return bool
      */
-    public static function zipDirectory($directory, $destination, $overwrite = false)
+    public static function zipDirectory($directory, $destination, $overwrite = false, $ignored = [])
     {
         if (!file_exists($directory) || !is_dir($directory))
         {
@@ -176,7 +188,7 @@ class IronWorker extends IronCore
         }
         $directory = rtrim($directory, DIRECTORY_SEPARATOR);
 
-        $files = self::fileNamesRecursive($directory);
+        $files = self::fileNamesRecursive($directory, '', $ignored);
 
         if (empty($files))
         {
@@ -799,7 +811,7 @@ class IronWorker extends IronCore
         $this->headers['Content-Type'] ='multipart/form-data';
     }
 
-    private static function fileNamesRecursive($dir, $base_dir = '')
+    private static function fileNamesRecursive($dir, $base_dir = '', $ignored = [])
     {
         $dir .= DIRECTORY_SEPARATOR;
         $files = scandir($dir);
@@ -807,14 +819,14 @@ class IronWorker extends IronCore
 
         foreach ($files as $name)
         {
-            if ($name == '.' || $name == '..' || $name == '.svn' || $name == '.git')
+            if ($name == '.' || $name == '..' || $name == '.svn' || $name == '.git' || in_array($base_dir.$name, $ignored))
             {
                 continue;
             }
 
             if (is_dir($dir.$name))
             {
-                $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/');
+                $inner_names = self::fileNamesRecursive($dir.$name, $base_dir.$name.'/', $ignored);
                 foreach ($inner_names as $iname)
                 {
                     $names[] = $iname;
