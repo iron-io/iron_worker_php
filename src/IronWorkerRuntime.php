@@ -1,5 +1,6 @@
 <?php
-namespace IronWorker
+
+namespace IronWorker;
 
 use IronCore\IronCore;
 
@@ -14,7 +15,7 @@ use IronCore\IronCore;
  * @package IronWorker
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
-class Runtime extends IronCore {
+class IronWorkerRuntime extends IronCore {
 
   /**
    * getConfig gets the configuration from the input to this worker
