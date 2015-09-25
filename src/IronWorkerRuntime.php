@@ -11,7 +11,6 @@ use IronCore\IronCore;
  * @link https://github.com/iron-io/iron_worker_php
  * @link http://www.iron.io/
  * @link http://dev.iron.io/
- * @version 2.0.2
  * @package IronWorker
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
