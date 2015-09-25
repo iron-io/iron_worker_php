@@ -275,4 +275,4 @@ You can find more documentation here:
 
 # Note for Developers
 
-You can test this library by modifying it and setting up a symbolic link to your local code after you run `composer install` on [the Dockerworker example](https://github.com/iron-io/dockerworker/tree/master/php).
+You can test this library by modifying it and setting up a symbolic link to your local code after you run `composer install` on [the Dockerworker example](https://github.com/iron-io/dockerworker/tree/master/php). See http://blog.grossi.io/2013/testing-your-packagistcomposer-package-locally/ for a detailed description on the Composer file layout and the symlinking strategy.
