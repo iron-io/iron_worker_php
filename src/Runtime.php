@@ -1,5 +1,6 @@
 <?php
-namespace IronWorker
+
+namespace IronWorker;
 
 use IronCore\IronCore;
 
