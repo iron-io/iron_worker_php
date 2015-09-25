@@ -15,7 +15,7 @@ use IronCore\IronCore;
  * @package IronWorker
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
-class IronWorkerRuntime extends IronCore {
+class Runtime extends IronCore {
 
   /**
    * getConfig gets the configuration from the input to this worker
