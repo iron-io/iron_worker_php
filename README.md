@@ -272,3 +272,7 @@ You can find more documentation here:
 * [IronWorker PHP reference](http://iron-io.github.com/iron_worker_php/).
 * [IronWorker PHP Wiki pages](https://github.com/iron-io/iron_worker_php/wiki).
 * [IronWorker PHP Examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
+
+# Note for Developers
+
+You can test this library by modifying it and setting up a symbolic link to your local code after you run `composer install` on [the Dockerworker example](https://github.com/iron-io/dockerworker/tree/master/php).
