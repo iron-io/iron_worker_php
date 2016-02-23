@@ -25,42 +25,41 @@ class IronUnitTestCase extends UnitTestCase
 
     public function tearDown()
     {
-        @unlink(dirname(__FILE__)."/_config.json");
-        @unlink(dirname(__FILE__)."/_config.ini");
-        @unlink(dirname(__FILE__)."/_worker.zip");
+        @unlink(dirname(__FILE__) . "/_config.json");
+        @unlink(dirname(__FILE__) . "/_config.ini");
+        @unlink(dirname(__FILE__) . "/_worker.zip");
     }
 
     public function workerDir()
     {
-        return dirname(__FILE__)."/worker/";
+        return dirname(__FILE__) . "/worker/";
     }
 
     public function writeJsonFile($data)
     {
-        file_put_contents(dirname(__FILE__)."/_config.json", json_encode($data));
+        file_put_contents(dirname(__FILE__) . "/_config.json", json_encode($data));
     }
 
     public function writeIniFile($array, $quote_keys = true)
     {
-        $file = dirname(__FILE__)."/_config.ini";
+        $file = dirname(__FILE__) . "/_config.ini";
         $text = '';
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $text .= "[$key]\r\n";
                 foreach ($value as $k => $v) {
-                     $text .= (is_numeric($k) || ctype_xdigit($k) || !$quote_keys ? "$k=" : '"'.$k.'"=').
-                        (is_numeric($v) || ctype_xdigit($v) ? "$v\r\n" : '"'.$v.'"'."\r\n");
+                    $text .= (is_numeric($k) || ctype_xdigit($k) || !$quote_keys ? "$k=" : '"' . $k . '"=') .
+                        (is_numeric($v) || ctype_xdigit($v) ? "$v\r\n" : '"' . $v . '"' . "\r\n");
                 }
                 $text .= "\r\n";
             } else {
-                $text .= (is_numeric($key) || ctype_xdigit($key) || !$quote_keys ? "$key=" : '"'.$key.'"=').
-                    (is_numeric($value) || ctype_xdigit($value) ? "$value\r\n" : '"'.$value.'"'."\r\n");
+                $text .= (is_numeric($key) || ctype_xdigit($key) || !$quote_keys ? "$key=" : '"' . $key . '"=') .
+                    (is_numeric($value) || ctype_xdigit($value) ? "$value\r\n" : '"' . $value . '"' . "\r\n");
             }
         }
         return file_put_contents($file, $text);
     }
 }
-
 
 class AllTests extends TestSuite
 {

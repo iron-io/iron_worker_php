@@ -21,20 +21,18 @@ class TestScheduling extends IronUnitTestCase
         $this->assertTrue(is_string($schedule_id));
     }
 
-
     public function testGetSchedules()
     {
-        $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 2);
+        $this->worker->postScheduleAdvanced('TestWorker', array(), time() + 60, "foo", 60, null, 2);
         $schedules = $this->worker->getSchedules();
         $this->assertTrue(is_array($schedules));
         $this->assertTrue(strlen($schedules[0]->id) > 0);
     }
 
-
     public function testGetSchedule()
     {
-        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 1);
-        $schedule    = $this->worker->getSchedule($schedule_id);
+        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time() + 60, "foo", 60, null, 1);
+        $schedule = $this->worker->getSchedule($schedule_id);
         $this->assertEqual($schedule->code_name, 'TestWorker');
         $this->assertEqual($schedule->status, 'scheduled');
         $this->assertEqual($schedule->id, $schedule_id);
@@ -42,7 +40,7 @@ class TestScheduling extends IronUnitTestCase
 
     public function testDeleteSchedule()
     {
-        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time()+60, "foo", 60, null, 1);
+        $schedule_id = $this->worker->postScheduleAdvanced('TestWorker', array(), time() + 60, "foo", 60, null, 1);
         $res = $this->worker->deleteSchedule($schedule_id);
         $this->assertEqual($res->msg, 'Cancelled');
     }
