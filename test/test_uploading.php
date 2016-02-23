@@ -47,8 +47,8 @@ class TestUploading extends IronUnitTestCase
     {
         $options = array(
             'max_concurrency' => 10,
-            'retries' => 5,
-            'retries_delay' => 20
+            'retries'         => 5,
+            'retries_delay'   => 20,
         );
         $this->assertTrue($this->worker->upload($this->workerDir(), 'worker.php', 'TestWorkerOptions', $options));
 
@@ -68,7 +68,7 @@ class TestUploading extends IronUnitTestCase
 
     public function testGetCodeDetails()
     {
-        $codes   = $this->worker->getCodes();
+        $codes = $this->worker->getCodes();
         $details = $this->worker->getCodeDetails($codes[0]->id);
         $this->assertEqual($details->id, $codes[0]->id);
         $this->assertEqual($details->name, $codes[0]->name);
