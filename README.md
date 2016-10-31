@@ -118,7 +118,7 @@ $ iron_worker upload HelloWorld
 
 ## Worker examples
 
-You can find plenty of good worker examples here: [iron_worker_examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
+You can find worker examples here: [iron_worker_examples](https://github.com/iron-io/dockerworker/tree/master/php)
 
 ## Queueing a Worker
 
