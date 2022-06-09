@@ -98,23 +98,7 @@ echo "Hello PHP World!\n";
 
 ## Upload code to server
 
-### Using CLI tool (preferred)
-
-* Get [CLI](http://dev.iron.io/worker/reference/cli) tool
-* Download or create `iron.json` config file with project_id/password
-* Create `HelloWorld.worker` file, example:
-
-```ruby
-runtime 'php'
-exec 'HelloWorld.php'
-```
-* Upload!
-
-```sh
-$ iron_worker upload HelloWorld
-```
-
-[.worker syntax reference](http://dev.iron.io/worker/reference/dotworker/)
+See here for how to build a PHP worker and upload it to Iron.io: https://github.com/iron-io/dockerworker/tree/master/php
 
 ## Worker examples
 
