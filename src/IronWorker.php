@@ -16,12 +16,12 @@ use IronCore\IronCore;
  */
 class IronWorker extends IronCore
 {
-    protected $client_version = '2.0.4';
+    protected $client_version = '2.0.5';
     protected $client_name    = 'iron_worker_php';
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
         'protocol'    => 'https',
-        'host'        => 'worker-aws-us-east-1.iron.io',
+        'host'        => 'iron-iw.us-east-1.antimony.io',
         'port'        => '443',
         'api_version' => '2',
     );
