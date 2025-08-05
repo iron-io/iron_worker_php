@@ -1,7 +1,6 @@
 iron_worker_php is PHP language binding for IronWorker.
 
 IronWorker is a massively scalable background processing system.
-[See How It Works](http://www.iron.io/worker/how-it-works)
 
 # Getting Started
 
@@ -13,8 +12,8 @@ IronWorker is a massively scalable background processing system.
 ## Get credentials
 To start using iron_worker_php, you need to sign up and get an oauth token.
 
-1. Go to http://iron.io/ and sign up.
-2. Get an Oauth Token at http://hud.iron.io/tokens
+1. Sign up [here](https://hud-e.iron.io/signup).
+2. Get a token at https://hud-e.iron.io/tokens
 
 ## Install iron_worker_php
 
@@ -86,35 +85,6 @@ $worker = new \IronWorker\IronWorker('iron.json');
     * `IRON_TOKEN`, `IRON_PROJECT_ID` and other environment variables
     * `.iron.ini` in user's home directory
     * `.iron.json` in user's home directory
-
-## Creating a Worker
-
-Here's an example worker:
-
-```php
-<?php
-echo "Hello PHP World!\n";
-```
-
-## Upload code to server
-
-### Using CLI tool (preferred)
-
-* Get [CLI](http://dev.iron.io/worker/reference/cli) tool
-* Download or create `iron.json` config file with project_id/password
-* Create `HelloWorld.worker` file, example:
-
-```ruby
-runtime 'php'
-exec 'HelloWorld.php'
-```
-* Upload!
-
-```sh
-$ iron_worker upload HelloWorld
-```
-
-[.worker syntax reference](http://dev.iron.io/worker/reference/dotworker/)
 
 ## Worker examples
 
@@ -270,7 +240,6 @@ You can find more documentation here:
 
 * http://dev.iron.io Full documetation for iron.io products.
 * [IronWorker PHP reference](http://iron-io.github.com/iron_worker_php/).
-* [IronWorker PHP Wiki pages](https://github.com/iron-io/iron_worker_php/wiki).
 * [IronWorker PHP Examples](https://github.com/iron-io/iron_worker_examples/tree/master/php)
 
 # Note for Developers
