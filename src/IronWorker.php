@@ -16,7 +16,7 @@ use IronCore\IronCore;
  */
 class IronWorker extends IronCore
 {
-    protected $client_version = '2.0.6';
+    protected $client_version = '2.0.7';
     protected $client_name    = 'iron_worker_php';
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
