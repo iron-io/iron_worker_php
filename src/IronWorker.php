@@ -21,7 +21,7 @@ class IronWorker extends IronCore
     protected $product_name   = 'iron_worker';
     protected $default_values = array(
         'protocol'    => 'https',
-        'host'        => 'worker-bld.io',
+        'host'        => 'worker-bld.iron.io',
         'port'        => '443',
         'api_version' => '2',
     );
